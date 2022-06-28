@@ -20,23 +20,32 @@
       <p class="list-item-label">
         Price
       </p>
-      <strong>
+      <strong :class="priceClass">
         {{ decimalPrice|englishFormat }}
+        <i 
+          v-if="priceClass === 'positive'" 
+          class="bi bi-arrow-up-right-circle"          
+        />
+        <i
+          v-if="priceClass === 'negative'"
+          class="bi bi-arrow-down-right-circle" 
+        />
       </strong>
     </section>
-    <section class="change">
+    <!--section class="change">
       <p class="list-item-label">
         24hs
       </p>
       <strong :class="changeClass">
         {{ changeUpdate|percentFormat }}
       </strong>
-    </section>
+    </section-->
   </li>
 </template>
 
 <script>
   import { gsap } from "gsap";
+  import 'bootstrap-icons/font/bootstrap-icons.css';
 
   export default {
      name: 'ListCryptoItem',
@@ -66,10 +75,12 @@
       return {
         priceUpdate: this.price,
         changeUpdate: this.change,
+        priceClass:'',
       }
      },
      watch:{
-      price(newVal){
+      price(newVal, oldVal){
+        this.priceClass = newVal > oldVal ? 'positive' : 'negative';
         gsap.to(this.$data, {priceUpdate: newVal, duration:1});
       },
       change(newVal){
@@ -93,7 +104,7 @@
         return this.priceUpdate.toFixed(3);
       },
       percentClass(){
-        return this.change > 0 ? 'percent-positive' : 'percent-negative'; 
+        return this.change > 0 ? 'positive' : 'negative'; 
       },
       changeClass(){
         return !this.change ? '' : this.percentClass;
@@ -105,7 +116,7 @@
 <style scoped>
   li {
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr;
     grid-template-rows: auto;
     padding: 1.5rem;  
     margin-bottom:8px;
@@ -121,7 +132,7 @@
     width: 3rem;
     padding: 5px;
     border: 1px solid #eeeeee;  
-    border-radius: 50%;  
+    border-radius: 50%; 
   }
   li .logo-info {
     display: flex;
@@ -139,12 +150,12 @@
     margin:0;
     font-weight: 400;
     color:#95949d;
-  }  
-  .percent-positive {
+  }
+  .positive {
     margin:0;
     color:#31c090
   }
-  .percent-negative {
+  .negative {
     margin:0;
     color:#e94e4e
   } 
