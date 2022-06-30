@@ -18,7 +18,6 @@
 </template>
 
 <script>
-   /*global _,  */ 
   import ListCryptoItem from "./ListCryptoItem.vue";
 
   export default {

@@ -100,7 +100,7 @@
       }
      },
      computed: {      
-      decimalPrice() {
+      decimalPrice(){
         return this.priceUpdate.toFixed(3);
       },
       percentClass(){
