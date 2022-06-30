@@ -18,7 +18,6 @@
 </template>
 
 <script>
-   /*global _,  */ 
   import ListCryptoItem from "./ListCryptoItem.vue";
 
   export default {
@@ -34,7 +33,7 @@
             name:"Bitcoin",
             symbol:"btc",
             img:"https://assets.coingecko.com/coins/images/1/small/bitcoin.png?1547033579",
-            price:21421,
+            price:0,
             change:-4,
           },
           {
@@ -42,7 +41,7 @@
             name:"Ethereum",
             symbol:"eth",
             img:"https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880",
-            price:1234.19,
+            price:0,
             change:343,
           },
            {
@@ -50,7 +49,7 @@
             name:"BNB",
             symbol:"bnb",
             img:"https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png?1644979850",
-            price:238.57,
+            price:0,
             change:20,
           },
            {
@@ -58,7 +57,7 @@
             name:"Cardano",
             symbol:"ada",
             img:"https://assets.coingecko.com/coins/images/975/small/cardano.png?1547034860",
-            price:0.5,
+            price:0,
             change:20,
           },
           {
@@ -66,7 +65,7 @@
             name:"PancakeSwap",
             symbol:"cake",
             img:"https://assets.coingecko.com/coins/images/12632/small/pancakeswap-cake-logo_%281%29.png?1629359065",
-            price:1.002,
+            price:0,
             change:20,
           },
           {
@@ -74,7 +73,7 @@
             name:"Polygon",
             symbol:"matic",
             img:"https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912",
-            price:0.59,
+            price:0,
             change:20,
           },
           {
@@ -82,7 +81,7 @@
             name:"Polkadot",
             symbol:"dot",
             img:"https://assets.coingecko.com/coins/images/12171/small/polkadot.png?1639712644",
-            price:8.1,
+            price:0,
             change:20,
           },
         ], 
