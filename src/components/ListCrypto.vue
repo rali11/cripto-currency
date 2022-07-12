@@ -44,7 +44,7 @@
           'matic-network',
           'polkadot',
           'terra-luna-2',
-          'solana',
+          'solana'
         ],
         infoTokens:[],      
       }
