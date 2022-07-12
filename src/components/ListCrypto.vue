@@ -1,19 +1,27 @@
 <template> 
   <div>
-    <transition-group 
-      name="list" 
-      tag="ul"
-    >          
-      <ListCryptoItem
-        v-for="item in tokens"
-        :key="item.id"
-        :img="item.img"
-        :symbol="item.symbol"
-        :name="item.name"
-        :price="item.price"
-        :change="item.change"
+    <template v-if="infoTokens.length !== tokens.length">
+      <ListCryptoItem 
+        v-for="n in tokens.length" 
+        :key="n"
       />
-    </transition-group> 
+    </template>
+    <template v-else>
+      <transition-group 
+        name="list" 
+        tag="ul"
+      >          
+        <ListCryptoItem
+          v-for="item in infoTokens"
+          :key="item.id"
+          :img="item.img"
+          :symbol="item.symbol"
+          :name="item.name"
+          :price="item.price"
+          :change="item.change"
+        />
+      </transition-group> 
+    </template>    
   </div>  
 </template>
 
@@ -26,87 +34,64 @@
       ListCryptoItem,
     },
     data(){
-      return{
+      return {
         tokens:[
-          {
-            id:"bitcoin",
-            name:"Bitcoin",
-            symbol:"btc",
-            img:"https://assets.coingecko.com/coins/images/1/small/bitcoin.png?1547033579",
-            price:0,
-            change:-4,
-          },
-          {
-            id:"ethereum",
-            name:"Ethereum",
-            symbol:"eth",
-            img:"https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880",
-            price:0,
-            change:343,
-          },
-           {
-            id:"binancecoin",
-            name:"BNB",
-            symbol:"bnb",
-            img:"https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png?1644979850",
-            price:0,
-            change:20,
-          },
-           {
-            id:"cardano",
-            name:"Cardano",
-            symbol:"ada",
-            img:"https://assets.coingecko.com/coins/images/975/small/cardano.png?1547034860",
-            price:0,
-            change:20,
-          },
-          {
-            id:"pancakeswap-token",
-            name:"PancakeSwap",
-            symbol:"cake",
-            img:"https://assets.coingecko.com/coins/images/12632/small/pancakeswap-cake-logo_%281%29.png?1629359065",
-            price:0,
-            change:20,
-          },
-          {
-            id:"matic-network",
-            name:"Polygon",
-            symbol:"matic",
-            img:"https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912",
-            price:0,
-            change:20,
-          },
-          {
-            id:"polkadot",
-            name:"Polkadot",
-            symbol:"dot",
-            img:"https://assets.coingecko.com/coins/images/12171/small/polkadot.png?1639712644",
-            price:0,
-            change:20,
-          },
-        ], 
+          'bitcoin',
+          'ethereum',
+          'binancecoin',
+          'cardano',
+          'pancakeswap-token',
+          'matic-network',
+          'polkadot',
+          'terra-luna-2',
+          'solana'
+        ],
+        infoTokens:[],      
       }
     },
     computed:{
       combinedStreams(){
-        return this.tokens.reduce((acc, item, index, tokens) => {
+        return this.infoTokens.reduce((acc, item, index, tokens) => {
           const lastItem = index === tokens.length-1;
           return `${acc}${item.symbol}usdt@trade${lastItem ? '' : '/'}`;
         },'stream?streams=');
       }
     },
     mounted(){   
-      this.connectBinanceStream();
+      try {
+        this.getInfoTokens();
+      } catch (error) {
+        console.log(error);
+      }
     },
     methods:{
+      async getInfoTokens(){
+        for (const item of this.tokens) {
+          const dataToken = await this.fetchInfo(item);
+          this.infoTokens.push({
+            id:item,
+            img:dataToken.image.small,
+            symbol:dataToken.symbol,
+            name:dataToken.name,
+            price:dataToken.market_data.current_price.usd,
+            change:0,
+          })
+        }
+        this.connectBinanceStream();
+      },
+      async fetchInfo(idToken){
+        const response = await fetch(`https://api.coingecko.com/api/v3/coins/${idToken}`);
+        const json = await response.json();
+        return json;
+      },
       connectBinanceStream(){
         const binanceStream = new WebSocket(`wss://stream.binance.com:9443/${this.combinedStreams}`);
         binanceStream.addEventListener('message',this.updateToken);
       },
       updateToken(event){
         const dataStream = JSON.parse(event.data).data;
-        const indexToken = this.tokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
-        this.tokens[indexToken].price = parseFloat(dataStream.p);
+        const indexToken = this.infoTokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
+        this.infoTokens[indexToken].price = parseFloat(dataStream.p);
       }
     }
   }

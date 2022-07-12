@@ -142,6 +142,12 @@
     overflow: hidden;
     cursor: pointer;    
   }
+  li > *{
+    overflow: hidden;
+  }
+  li > *:last-child{
+    padding-left: 25%;
+  }
   li figure img {
     height:  3rem;
     width: 3rem;
