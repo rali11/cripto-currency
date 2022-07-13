@@ -7,30 +7,30 @@
           :src="img" 
         >
       </figure>          
-      <div class="w-100">
-        <p :class="[symbol ? 'list-item-label' : 'symbol-skeleton loading'] ">
-          {{ symbol|mayus }}
-        </p>
-        <strong :class="[name ? '' : 'name-skeleton loading']">
+      <div class=""> 
+        <strong :class="[name ? '' : 'normal-skeleton loading']">
           {{ name }}
         </strong>
+        <p :class="[symbol ? 'list-item-label' : 'small-skeleton loading'] ">
+          {{ symbol|mayus }}
+        </p>                
       </div>
     </section>
-    <section class="w-100">
-      <p :class="[price ? 'list-item-label' : 'symbol-skeleton loading']">
-        {{ price ? 'Price' : '' }}
-      </p>
-      <strong :class="[price ? priceClass : 'name-skeleton loading']">
-        {{ !price ? '' : priceFormat }}
+    <section class="price-section">      
+      <strong :class="[price ? priceClass : 'normal-skeleton loading']">
+        {{ !price ? '' : priceFormat }}        
+      </strong>
+      <p :class="[change ? '' : 'small-skeleton loading', percentClass] ">
+        {{ !change ? '' : percentFormat }}
         <i 
-          v-if="priceClass === 'positive'" 
+          v-if="change > 0" 
           class="bi bi-arrow-up-right-circle"          
         />
         <i
-          v-if="priceClass === 'negative'"
+          v-if="change < 0"
           class="bi bi-arrow-down-right-circle" 
         />
-      </strong>
+      </p>
     </section>
   </li>
 </template>
@@ -40,8 +40,8 @@
   import 'bootstrap-icons/font/bootstrap-icons.css';
 
   export default {
-     name: 'ListCryptoItem',
-     props:{
+    name: 'ListCryptoItem',
+    props:{
       img:{
         type:String,
         default:''
@@ -62,15 +62,15 @@
         type: Number,
         default:0,
       },
-     },
-     data() {
+    },
+    data() {
       return {
         priceUpdate: this.price,
         changeUpdate: this.change,
         priceClass:'',
       }
-     },
-     watch:{
+    },
+    watch:{
       price(newVal, oldVal){
         this.priceClass = newVal > oldVal ? 'positive' : 'negative';
         gsap.to(this.$data, {priceUpdate: newVal, duration:1});
@@ -78,18 +78,18 @@
       change(newVal){
         gsap.to(this.$data, {changeUpdate: newVal, duration:1});
       }
-     },
-     filters:{
+    },
+    filters:{
       mayus(val){
         return val.toUpperCase();
-      },
-      percentFormat(val){
-        return `${val.toFixed(2)}%`;
       }
-     },
-     computed: {      
+    },
+    computed: {      
       decimalPrice(){
         return this.priceUpdate.toFixed(3);
+      },
+      percentFormat(){
+        return `${this.changeUpdate.toFixed(2)}%`;
       },
       priceFormat(){
         const options = {style: 'currency', currency: 'USD'};
@@ -101,14 +101,11 @@
       changeClass(){
         return !this.change ? '' : this.percentClass;
       }
-     }
+    }
   }
 </script>
 
 <style scoped>
-  .w-100{
-    width: 100%;
-  }
   .loading {
     background: #eee;
     background: linear-gradient(90deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
@@ -116,61 +113,72 @@
     animation: 1.5s shine linear infinite;
     border-width: 0;
   }
-  .symbol-skeleton {
-    display: block;
+  .small-skeleton {
     width: 40%;
     height: 50%;
     margin-bottom:3px;
     margin-top:0;
   }
-  .name-skeleton {
-    display: block;
+  .normal-skeleton {
     width: 80%;
     height: 50%;
     margin-bottom:3px;
   }
   li {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    grid-template-rows: auto;
-    padding: 1.5rem;  
+    grid-template-columns: 1.4fr 1fr;
+    padding: 1.3rem;  
     margin-bottom:8px;
     border: 2px solid #f2f3f5;
     border-radius:10px;
     background-color: white;       
     transition: all .9s ease-in-out;
-    overflow: hidden;
     cursor: pointer;    
   }
-  li > *{
-    overflow: hidden;
+  .logo-info {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .7rem;
   }
-  li > *:last-child{
-    padding-left: 25%;
+  .logo-info figure {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
   }
-  li figure img {
+  .logo-info figure img {
     height:  3rem;
     width: 3rem;
     padding: 5px;
     border: 1px solid #eeeeee;  
     border-radius: 50%; 
   }
-  li .logo-info {
+  .logo-info > *:last-child{    
     display: flex;
-    flex-direction: row;
-    column-gap: 10px;
-  }
-  li .logo-info figure {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
-    margin: 0;
+    text-overflow: ellipsis;    
+    overflow: hidden;
+  }
+  .logo-info > *:last-child > *{
+    text-overflow: ellipsis;    
+    overflow: hidden;
+  }
+  .logo-info > *:last-child > strong {
+    font-size: 1.1rem;
+  }
+  .price-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;    
+  }
+  .price-section > *:first-child{
+    font-size: 1.1rem;
   }
   .list-item-label {
     margin:0;
     font-weight: 400;
     color:#95949d;
+    text-overflow: ellipsis;
   }
   .positive {
     margin:0;
@@ -181,8 +189,8 @@
     color:#e94e4e
   } 
   @keyframes shine {
-  to {
-    background-position-x: -200%;
+    to {
+      background-position-x: -200%;
     }
   }
 </style>

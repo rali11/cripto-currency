@@ -27,6 +27,7 @@
 
 <script>
   import ListCryptoItem from "./ListCryptoItem.vue";
+  import _ from 'lodash';
 
   export default {
     name: 'ListCrypto',
@@ -50,10 +51,16 @@
       }
     },
     computed:{
-      combinedStreams(){
+      combinedTradeStreams(){
         return this.infoTokens.reduce((acc, item, index, tokens) => {
-          const lastItem = index === tokens.length-1;
-          return `${acc}${item.symbol}usdt@trade${lastItem ? '' : '/'}`;
+          const isLastItem = index === tokens.length-1;
+          return `${acc}${item.symbol}usdt@trade${isLastItem ? '' : '/'}`;
+        },'stream?streams=');
+      },
+      combinedTickerStream(){
+        return this.infoTokens.reduce((acc, item, index, tokens) => {
+          const isLastItem = index === tokens.length-1;
+          return `${acc}${item.symbol}usdt@ticker${isLastItem ? '' : '/'}`;
         },'stream?streams=');
       }
     },
@@ -74,24 +81,32 @@
             symbol:dataToken.symbol,
             name:dataToken.name,
             price:dataToken.market_data.current_price.usd,
-            change:0,
+            change:dataToken.market_data.price_change_percentage_24h,
           })
         }
-        this.connectBinanceStream();
+        this.createBinanceStreams();
       },
       async fetchInfo(idToken){
         const response = await fetch(`https://api.coingecko.com/api/v3/coins/${idToken}`);
         const json = await response.json();
         return json;
       },
-      connectBinanceStream(){
-        const binanceStream = new WebSocket(`wss://stream.binance.com:9443/${this.combinedStreams}`);
-        binanceStream.addEventListener('message',this.updateToken);
+      createBinanceStreams(){
+        const tradeStream = new WebSocket(`wss://stream.binance.com:9443/${this.combinedTradeStreams}`);
+        const tickerStream = new WebSocket(`wss://stream.binance.com:9443/${this.combinedTickerStream}`);
+        tradeStream.addEventListener('message',this.updateTradeToken);
+        tickerStream.addEventListener('message',this.updateChangeToken)
       },
-      updateToken(event){
+      updateTradeToken(event){
         const dataStream = JSON.parse(event.data).data;
         const indexToken = this.infoTokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
         this.infoTokens[indexToken].price = parseFloat(dataStream.p);
+      },
+      updateChangeToken(event){
+        const dataStream = JSON.parse(event.data).data;
+        const indexToken = this.infoTokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
+        this.infoTokens[indexToken].change = parseFloat(dataStream.P);
+        this.infoTokens = _.orderBy(this.infoTokens,['change'],['desc']);
       }
     }
   }

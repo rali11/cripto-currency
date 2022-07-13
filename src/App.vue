@@ -16,9 +16,7 @@ export default {
 </script>
 <style scoped>
   #app {
-    width: 100vw;
-    height: 100vh;
-    margin-top:10vh;
+    margin: 0;
     display: flex;
     align-items: center;
     justify-content: center;
