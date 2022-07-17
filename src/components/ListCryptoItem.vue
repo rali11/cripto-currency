@@ -11,16 +11,22 @@
         <strong :class="[name ? '' : 'normal-skeleton loading']">
           {{ name }}
         </strong>
-        <p :class="[symbol ? 'list-item-label' : 'small-skeleton loading'] ">
+        <p :class="[symbol ? 'list-item-label' : 'small-skeleton loading']">
           {{ symbol|mayus }}
         </p>                
       </div>
     </section>
-    <section class="price-section">      
+    <section class="price-section">  
+      <p :class="[symbol ? 'list-item-label' : 'small-skeleton loading']">
+        {{ !price ? '' : 'Price' }}   
+      </p>   
+      <p :class="[symbol ? 'list-item-label' : 'small-skeleton loading']">
+        {{ !price ? '' : 'Change' }}  
+      </p>
       <strong :class="[price ? priceClass : 'normal-skeleton loading']">
         {{ !price ? '' : priceFormat }}        
       </strong>
-      <p :class="[change ? '' : 'small-skeleton loading', percentClass] ">
+      <p :class="[change ? '' : 'normal-skeleton loading', percentClass] ">
         {{ !change ? '' : percentFormat }}
         <i 
           v-if="change > 0" 
@@ -115,18 +121,18 @@
   }
   .small-skeleton {
     width: 40%;
-    height: 50%;
+    height: auto;
     margin-bottom:3px;
     margin-top:0;
   }
   .normal-skeleton {
     width: 80%;
-    height: 50%;
+    height: auto;
     margin-bottom:3px;
   }
   li {
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
+    grid-template-columns: 1fr 1fr;
     padding: 1.3rem;  
     margin-bottom:8px;
     border: 2px solid #f2f3f5;
@@ -154,25 +160,33 @@
     border-radius: 50%; 
   }
   .logo-info > *:last-child{    
-    display: flex;
-    flex-direction: column;
-    text-overflow: ellipsis;    
+    display: grid;
+    grid-template-columns: 1fr;    
     overflow: hidden;
   }
-  .logo-info > *:last-child > *{
-    text-overflow: ellipsis;    
-    overflow: hidden;
+  .logo-info > *:last-child > p {
+    grid-row:1/2;
   }
   .logo-info > *:last-child > strong {
     font-size: 1.1rem;
+     text-overflow: ellipsis;    
+    overflow: hidden;
+    grid-row:2/3;
   }
   .price-section {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;    
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 0;
   }
-  .price-section > *:first-child{
+  .price-section > .list-item-label:nth-child(2){
+    text-align: end;
+  }
+  .price-section > *:nth-child(3){
     font-size: 1.1rem;
+  }
+  .price-section > *:last-child{
+    font-size: 1.1rem;
+    text-align: end;
   }
   .list-item-label {
     margin:0;
