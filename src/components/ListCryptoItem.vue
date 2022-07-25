@@ -126,9 +126,8 @@
       color: var(--var-text-dark-color);
     }
     .metadata-section {
-      display: grid;
-      grid-template-columns: 1fr; 
-      gap: 0;
+      display: flex;
+      flex-direction: column;
     }
     .metadata-section > *:nth-child(-n+2){
       display: none;
@@ -137,13 +136,15 @@
       font-size: 1.1rem;
       text-align: end;
       margin-left: auto;
+      height: 50%;
       color: var(--var-text-dark-color);
     }
     .metadata-section > *:nth-child(4){
       margin-left: auto;
       text-align: end;    
       font-weight: 400;
-    }    
+      height: 50%;
+    } 
   }
   @media (min-width: 576px) {
     li {

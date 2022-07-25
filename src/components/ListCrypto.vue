@@ -1,27 +1,19 @@
 <template> 
-  <div>
-    <template v-if="infoTokens.length !== tokens.length">
-      <ListCryptoItem 
-        v-for="n in tokens.length" 
-        :key="n"
+  <div>    
+    <transition-group 
+      name="list" 
+      tag="ul"
+    >          
+      <ListCryptoItem
+        v-for="item in infoTokens"
+        :key="item.id"
+        :img="item.img"
+        :symbol="item.symbol"
+        :name="item.name"
+        :price="item.price"
+        :change="item.change"
       />
-    </template>
-    <template v-else>
-      <transition-group 
-        name="list" 
-        tag="ul"
-      >          
-        <ListCryptoItem
-          v-for="item in infoTokens"
-          :key="item.id"
-          :img="item.img"
-          :symbol="item.symbol"
-          :name="item.name"
-          :price="item.price"
-          :change="item.change"
-        />
-      </transition-group> 
-    </template>    
+    </transition-group> 
   </div>  
 </template>
 
@@ -98,23 +90,22 @@
         tradeStream.addEventListener('message',this.updateTradeToken);
         tickerStream.addEventListener('message',this.updateChangeToken)
         setInterval(() => {
-          /*this.stackChange.splice(0,10).forEach(dataStream => {
+          this.stackChange.splice(0,10).forEach(dataStream => {
             if(dataStream){
               const indexToken = this.infoTokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
               this.infoTokens[indexToken].change = parseFloat(dataStream.P);              
             }      
           });
-          this.infoTokens = _.orderBy(this.infoTokens,['change'],['desc']);*/
-          this.infoTokens = _.shuffle(this.infoTokens);
-        },3000)
+          this.infoTokens = _.orderBy(this.infoTokens,['change'],['desc']);
+        },1000)
       },
       updateTradeToken(event){
         const dataStream = JSON.parse(event.data).data;
         const indexToken = this.infoTokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
         this.infoTokens[indexToken].price = parseFloat(dataStream.p);
       },
-      updateChangeToken(){        
-        //this.stackChange.push(JSON.parse(event.data).data);
+      updateChangeToken(event){        
+        this.stackChange.push(JSON.parse(event.data).data);
       }
     }
   }
