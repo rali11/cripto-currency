@@ -98,22 +98,23 @@
         tradeStream.addEventListener('message',this.updateTradeToken);
         tickerStream.addEventListener('message',this.updateChangeToken)
         setInterval(() => {
-          this.stackChange.splice(0,10).forEach(dataStream => {
+          /*this.stackChange.splice(0,10).forEach(dataStream => {
             if(dataStream){
               const indexToken = this.infoTokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
               this.infoTokens[indexToken].change = parseFloat(dataStream.P);              
             }      
           });
-          this.infoTokens = _.orderBy(this.infoTokens,['change'],['desc']);
-        },1000)
+          this.infoTokens = _.orderBy(this.infoTokens,['change'],['desc']);*/
+          this.infoTokens = _.shuffle(this.infoTokens);
+        },3000)
       },
       updateTradeToken(event){
         const dataStream = JSON.parse(event.data).data;
         const indexToken = this.infoTokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
         this.infoTokens[indexToken].price = parseFloat(dataStream.p);
       },
-      updateChangeToken(event){        
-        this.stackChange.push(JSON.parse(event.data).data);
+      updateChangeToken(){        
+        //this.stackChange.push(JSON.parse(event.data).data);
       }
     }
   }

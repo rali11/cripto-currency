@@ -9,8 +9,5 @@
     ],
     "plugins": [
         "vue"
-    ],
-    "rules": {
-        "no-unused-vars":"off"
-    }
+    ]
 }
