@@ -41,7 +41,7 @@
   import { gsap } from "gsap";
   import 'bootstrap-icons/font/bootstrap-icons.css';
   import '../css/animation-skeleton.css';
-    import '../css/color.css';
+  import '../css/color.css';
 
   export default {
     name: 'ListCryptoItem',

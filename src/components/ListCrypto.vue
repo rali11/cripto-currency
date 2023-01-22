@@ -20,6 +20,7 @@
 <script>
   import ListCryptoItem from "./ListCryptoItem.vue";
   import _ from 'lodash';
+  import {createStream} from '../services/BinanceApi.js';
 
   export default {
     name: 'ListCrypto',
@@ -34,10 +35,6 @@
           'binancecoin',
           'cardano',
           'pancakeswap-token',
-          'matic-network',
-          'polkadot',
-          'terra-luna-2',
-          'solana'
         ],
         infoTokens:[],    
         stackChange:[],  
@@ -45,16 +42,13 @@
     },
     computed:{
       combinedTradeStreams(){
-        return this.infoTokens.reduce((acc, item, index, tokens) => {
-          const isLastItem = index === tokens.length-1;
-          return `${acc}${item.symbol}usdt@trade${isLastItem ? '' : '/'}`;
-        },'stream?streams=');
+        return this.arraySymbolCrypto.join('usdt@trade;').concat('usdt@trade').split(';');
       },
       combinedTickerStream(){
-        return this.infoTokens.reduce((acc, item, index, tokens) => {
-          const isLastItem = index === tokens.length-1;
-          return `${acc}${item.symbol}usdt@ticker${isLastItem ? '' : '/'}`;
-        },'stream?streams=');
+        return this.arraySymbolCrypto.join('usdt@ticker;').concat('usdt@ticker').split(';');
+      },
+      arraySymbolCrypto(){
+        return this.infoTokens.map(item => item.symbol);
       }
     },
     mounted(){   
@@ -76,7 +70,7 @@
             price:dataToken.market_data.current_price.usd,
             change:dataToken.market_data.price_change_percentage_24h,
           })
-        }
+        }       
         this.createBinanceStreams();
       },
       async fetchInfo(idToken){
@@ -84,28 +78,42 @@
         const json = await response.json();
         return json;
       },
-      createBinanceStreams(){
-        const tradeStream = new WebSocket(`wss://stream.binance.com:9443/${this.combinedTradeStreams}`);
-        const tickerStream = new WebSocket(`wss://stream.binance.com:9443/${this.combinedTickerStream}`);
-        tradeStream.addEventListener('message',this.updateTradeToken);
-        tickerStream.addEventListener('message',this.updateChangeToken)
+      async createBinanceStreams(){
+        try {
+          const binanceStreamTicker = await createStream();
+          const binanceStreamTrade = await createStream();
+          binanceStreamTicker.subscribeStream(this.combinedTickerStream);
+          binanceStreamTicker.messageListener(this.updateChangeToken);
+          binanceStreamTrade.subscribeStream(this.combinedTradeStreams);
+          binanceStreamTrade.messageListener(this.updateTradeToken);
+          this.intervalFunction();
+        } catch (error) {
+          console.log(error);
+        }       
+      },
+      responseEventpriceStream(data){
+        data.e === 'trade' ? this.updateTradeToken(data) : this.updateChangeToken(data);
+      },
+      updateTradeToken(event){
+        const data = JSON.parse(event.data);
+        if(data.e === 'trade'){
+          const indexToken = this.infoTokens.findIndex(item => data.s.toLowerCase().includes(item.symbol));
+          this.infoTokens[indexToken].price = parseFloat(data.p);
+        }        
+      },
+      updateChangeToken(event){        
+        this.stackChange.push(JSON.parse(event.data));
+      },
+      intervalFunction(){
         setInterval(() => {
           this.stackChange.splice(0,10).forEach(dataStream => {
-            if(dataStream){
+            if(dataStream.e === '24hrTicker'){
               const indexToken = this.infoTokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
               this.infoTokens[indexToken].change = parseFloat(dataStream.P);              
             }      
           });
           this.infoTokens = _.orderBy(this.infoTokens,['change'],['desc']);
-        },1000)
-      },
-      updateTradeToken(event){
-        const dataStream = JSON.parse(event.data).data;
-        const indexToken = this.infoTokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
-        this.infoTokens[indexToken].price = parseFloat(dataStream.p);
-      },
-      updateChangeToken(event){        
-        this.stackChange.push(JSON.parse(event.data).data);
+        },1000);
       }
     }
   }
