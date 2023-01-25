@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import _ from 'lodash';
+import "./assets/styles/index.scss"
 
 Vue.config.productionTip = false
 

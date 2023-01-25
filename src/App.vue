@@ -1,24 +1,22 @@
 <template>
   <div id="app">
-    <ListCrypto style="width:700px;" />
+    <List style="width:700px;" />
   </div>
 </template>
 
 <script>
-import ListCrypto from './components/ListCrypto.vue';
+import List from './components/ui/atoms/List.vue';
 
 export default {
   name: 'App',
   components: {
-    ListCrypto
+    List
   }
 }
 </script>
 <style scoped>
   #app {
-    width: 100vw;
-    height: 100vh;
-    margin-top:10vh;
+    margin: 0;
     display: flex;
     align-items: center;
     justify-content: center;
