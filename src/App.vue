@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import List from './components/ui/atoms/List.vue';
+import List from './components/ui/molecules/List.vue';
 
 export default {
   name: 'App',

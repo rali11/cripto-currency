@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import ListItem from "../molecules/ListItem.vue";
+  import ListItem from "../atoms/ListItem.vue";
   import _ from 'lodash';
   import {createStream} from '../../../services/BinanceApi.js';
 
