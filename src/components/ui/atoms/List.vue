@@ -4,11 +4,11 @@
       name="list" 
       tag="ul"
     >          
-      <ListCryptoItem
+      <ListItem
         v-for="item in infoTokens"
         :key="item.id"
-        :img="item.img"
-        :symbol="item.symbol"
+        :logo="item.img"
+        :ticker="item.symbol"
         :name="item.name"
         :price="item.price"
         :change="item.change"
@@ -18,14 +18,13 @@
 </template>
 
 <script>
-  import ListCryptoItem from "./ListCryptoItem.vue";
+  import ListItem from "../molecules/ListItem.vue";
   import _ from 'lodash';
-  import {createStream} from '../services/BinanceApi.js';
+  import {createStream} from '../../../services/BinanceApi.js';
 
   export default {
-    name: 'ListCrypto',
     components:{
-      ListCryptoItem,
+      ListItem,
     },
     data(){
       return {

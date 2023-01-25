@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <ListCrypto style="width:700px;" />
+    <List style="width:700px;" />
   </div>
 </template>
 
 <script>
-import ListCrypto from './components/ListCrypto.vue';
+import List from './components/ui/atoms/List.vue';
 
 export default {
   name: 'App',
   components: {
-    ListCrypto
+    List
   }
 }
 </script>
