@@ -190,7 +190,7 @@
       display: var(--price-label-display);
     }    
     
-    &__percentage{
+    &__percentage {
       text-align:end;
     }
 

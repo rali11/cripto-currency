@@ -34,6 +34,8 @@
           'binancecoin',
           'cardano',
           'pancakeswap-token',
+          'matic-network',
+          'solana'
         ],
         infoTokens:[],    
         stackChange:[],  
@@ -107,8 +109,8 @@
         setInterval(() => {
           this.stackChange.splice(0,10).forEach(dataStream => {
             if(dataStream.e === '24hrTicker'){
-              const indexToken = this.infoTokens.findIndex(item => dataStream.s.toLowerCase().includes(item.symbol));
-              this.infoTokens[indexToken].change = parseFloat(dataStream.P);              
+              const indexToken = this.infoTokens.find(item => dataStream.s.toLowerCase().includes(item.symbol));
+              indexToken.change = parseFloat(dataStream.P);              
             }      
           });
           this.infoTokens = _.orderBy(this.infoTokens,['change'],['desc']);
