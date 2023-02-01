@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <List style="width:700px;" />
+    <CryptoCurrency style="width:700px;" />
   </div>
 </template>
 
 <script>
-import List from './components/ui/molecules/List.vue';
+import CryptoCurrency from './components/crypto-currency/CryptoCurrency.vue';
 
 export default {
   name: 'App',
   components: {
-    List
+    CryptoCurrency
   }
 }
 </script>
