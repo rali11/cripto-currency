@@ -3,6 +3,11 @@
         "browser": true,
         "es2021": true
     },
+    "ignorePatterns": [
+        "src/services/*/*.js",
+        "src/services/*.js",
+        "**/*.config.js"
+    ],
     "extends": [
         "eslint:recommended",
         "plugin:vue/strongly-recommended"

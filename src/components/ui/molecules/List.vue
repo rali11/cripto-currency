@@ -3,9 +3,10 @@
     <transition-group 
       name="list" 
       tag="ul"
+      class="list"
     >          
       <ListItem
-        v-for="item in infoTokens"
+        v-for="item in sortList"
         :key="item.id"
         :logo="item.img"
         :ticker="item.symbol"
@@ -20,116 +21,49 @@
 <script>
   import ListItem from "../atoms/ListItem.vue";
   import _ from 'lodash';
-  import {createStream} from '../../../services/BinanceApi.js';
 
   export default {
     components:{
       ListItem,
     },
-    data(){
-      return {
-        tokens:[
-          'bitcoin',
-          'ethereum',
-          'binancecoin',
-          'cardano',
-          'pancakeswap-token',
-          'matic-network',
-          'solana'
-        ],
-        infoTokens:[],    
-        stackChange:[],  
+    props:{
+      items:{
+        type: Array,
+        default:()=>[],
+      },
+      orderBy:{
+        type:String,
+        default:'',
+      },
+      asc:{
+        type:Boolean,
+        default:true
       }
     },
     computed:{
-      combinedTradeStreams(){
-        return this.arraySymbolCrypto.join('usdt@trade;').concat('usdt@trade').split(';');
+      order(){
+        return this.asc ? 'asc':'desc';
       },
-      combinedTickerStream(){
-        return this.arraySymbolCrypto.join('usdt@ticker;').concat('usdt@ticker').split(';');
-      },
-      arraySymbolCrypto(){
-        return this.infoTokens.map(item => item.symbol);
+      sortList(){
+        return _.orderBy(this.items,[this.orderBy],[this.order]);
       }
-    },
-    mounted(){   
-      try {
-        this.getInfoTokens();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    methods:{
-      async getInfoTokens(){
-        for (const item of this.tokens) {
-          const dataToken = await this.fetchInfo(item);
-          this.infoTokens.push({
-            id:item,
-            img:dataToken.image.small,
-            symbol:dataToken.symbol,
-            name:dataToken.name,
-            price:dataToken.market_data.current_price.usd,
-            change:dataToken.market_data.price_change_percentage_24h,
-          })
-        }       
-        this.createBinanceStreams();
-      },
-      async fetchInfo(idToken){
-        const response = await fetch(`https://api.coingecko.com/api/v3/coins/${idToken}`);
-        const json = await response.json();
-        return json;
-      },
-      async createBinanceStreams(){
-        try {
-          const binanceStreamTicker = await createStream();
-          const binanceStreamTrade = await createStream();
-          binanceStreamTicker.subscribeStream(this.combinedTickerStream);
-          binanceStreamTicker.messageListener(this.updateChangeToken);
-          binanceStreamTrade.subscribeStream(this.combinedTradeStreams);
-          binanceStreamTrade.messageListener(this.updateTradeToken);
-          this.intervalFunction();
-        } catch (error) {
-          console.log(error);
-        }       
-      },
-      responseEventpriceStream(data){
-        data.e === 'trade' ? this.updateTradeToken(data) : this.updateChangeToken(data);
-      },
-      updateTradeToken(event){
-        const data = JSON.parse(event.data);
-        if(data.e === 'trade'){
-          const indexToken = this.infoTokens.findIndex(item => data.s.toLowerCase().includes(item.symbol));
-          this.infoTokens[indexToken].price = parseFloat(data.p);
-        }        
-      },
-      updateChangeToken(event){        
-        this.stackChange.push(JSON.parse(event.data));
-      },
-      intervalFunction(){
-        setInterval(() => {
-          this.stackChange.splice(0,10).forEach(dataStream => {
-            if(dataStream.e === '24hrTicker'){
-              const indexToken = this.infoTokens.find(item => dataStream.s.toLowerCase().includes(item.symbol));
-              indexToken.change = parseFloat(dataStream.P);              
-            }      
-          });
-          this.infoTokens = _.orderBy(this.infoTokens,['change'],['desc']);
-        },1000);
-      }
-    }
+    },   
   }
 </script>
-<style scoped>
-  ul {
+<style lang="scss" scoped>
+  .list {
     position: relative;
     margin:0;
     padding:0;
-  }
-  .list-enter, .list-leave-to {
+
+    &-enter, &-leave-to {
     opacity: 0;
+    }
+    
+    &-leave-active {
+      width: 100%;
+      position: absolute;
+    }
   }
-  .list-leave-active {
-    width: 100%;
-    position: absolute;
-  }
+  
 </style>
