@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="crypto-currency">
+    <ListHeader :order-by.sync="orderBy" />
     <List 
       :items="this.tokenList"
       :order-by="orderBy"
@@ -9,12 +10,13 @@
 </template>
 
 <script>
-  import {getListInfoToken, getInfoToken} from '../../services/api/CoinGecko.js';
+  import {getListInfoToken} from '../../services/api/CoinGecko.js';
   import {StreamCryptoMarket, StreamCryptoMarketObserver} from '../../services/api/BinanceStream.js';
   import List from '../ui/molecules/List.vue';
+  import ListHeader from '../ui/molecules/ListHeader.vue';
 
   export default {  
-    components:{List},  
+    components:{List, ListHeader},  
     data(){
       return {
         tokens:[
@@ -22,6 +24,9 @@
           'ethereum',
           'binancecoin',
           'cardano',
+          'solana',
+          'matic-network',
+          'pancakeswap-token',
         ],
         infoTokens:[],
         tokenList:[],    
@@ -32,11 +37,6 @@
     mounted(){   
       this.getTokenList();
     },    
-    watch:{
-      tokens(newList){
-        this.fetchInfoToken(newList[newList.length-1]);
-      }
-    },
     methods:{
       async getTokenList(){
         this.infoTokens = await getListInfoToken(this.tokens);
@@ -47,15 +47,15 @@
           this.tokenList = this.infoTokens.map(item => ({...item}));
         }, 1000);
       }, 
-      async fetchInfoToken(idToken){
-        const infoToken = await getInfoToken(idToken);
-        this.infoTokens.push(infoToken);
-        this.tokenList = this.infoTokens.map(item => ({...item}));
-      }
     }
   }
 </script>
 
 <style lang="scss" scoped>
-
+  .crypto-currency{
+    display:flex;
+    flex-direction:column;
+    gap: 5px;
+    padding: 1rem;
+  }
 </style>
