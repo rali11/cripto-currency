@@ -1,6 +1,9 @@
 <template>
   <div class="crypto-currency">
-    <ListHeader :order-by.sync="orderBy" />
+    <ListHeader 
+      :order-by.sync="orderBy" 
+      :asc.sync="asc"  
+    />
     <List 
       :items="this.tokenList"
       :order-by="orderBy"
