@@ -10,6 +10,12 @@
       >
         <i class="bi bi-filter" />
       </Menu>
+      <Menu
+        v-model="orderSelected"
+        :list="orderList"
+      >
+        <i class="bi bi-sort-down" />
+      </Menu>
     </div>
   </div>
 </template>
@@ -22,21 +28,33 @@ import Menu from './Menu.vue'
       orderBy:{
         default:'',
         type:String,
+      },
+      asc:{
+        default:false,
+        type:Boolean,
       }
     },
     data(){
       return {
         orderBySelected:this.orderBy,
+        orderSelected:'desc',
         orderByList:[
           {value:'name',label:'Name',selected:false},
           {value:'price',label:'Price',selected:false},
           {value:'change',label:'Change',selected:true},
+        ],
+        orderList:[
+          {value:'asc', label:'Asc.', selected:false},
+          {value:'desc', label:'Desc.', selected:true}
         ]
       }
     },
     watch:{
       orderBySelected(value){
         this.$emit('update:orderBy',value);
+      },
+      orderSelected(value){
+        this.$emit('update:asc',value === 'asc' ? true : false);
       }
     }
   }
@@ -63,25 +81,6 @@ import Menu from './Menu.vue'
       font-size:1rem;
       text-transform: capitalize;
       height: 100%;
-    }
-
-    &__percent {
-      font-size: .7rem;
-      border-radius: 50%;
-      background-color: #aaabad;
-      color:white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 1.1rem;
-      width: 1.1rem;
-      line-height: 0;
-    }
-
-    .bi {
-      line-height: 0 !important;
-      font-weight: bold !important;
-      font-size: 1.1rem;
     }
   }
 </style>
