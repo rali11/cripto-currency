@@ -1,6 +1,6 @@
 <template>
   <div class="lines">
-    <div class="first-div">
+    <div>
       <div class="line circle pulse" />
       <div class="center">
         <div class="line pulse" />
@@ -43,7 +43,7 @@
       margin-top:8px;
     }
 
-    .first-div {
+    div:first-child {
       display: grid;
       grid-template-columns: 1fr 2fr;
       align-items: center;
@@ -62,19 +62,11 @@
       height: 1rem;
     }
 
-    .short {
-      width: 80px;
-    }
-
     .circle {
       border-radius: 50%; 
       height: 3rem;
       width: 3rem;
       padding: 5px;
-    }
-    
-    .thumb {
-      height: 7.5rem;
     }
 
     .mobile-none {
