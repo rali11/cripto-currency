@@ -1,8 +1,9 @@
 <template>
   <div class="menu">
     <button
-      @focus="showMenu = !showMenu" 
+      @click="displayMenu"
       @focusout="showMenu = !showMenu"
+      ref="btnMenu"
       class="menu__btn"
     >
       <slot />
@@ -56,6 +57,10 @@
           }
           this.$emit('selected', value);
         })
+      },
+      displayMenu(){
+        this.showMenu = !this.showMenu;
+        this.$refs.btnMenu.focus();
       }
     }
   }
