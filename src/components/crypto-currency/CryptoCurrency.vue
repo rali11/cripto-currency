@@ -55,10 +55,15 @@
 </script>
 
 <style lang="scss" scoped>
+  @use "@/assets/styles/settings/variables";
+  
   .crypto-currency{
     display:flex;
     flex-direction:column;
     gap: 5px;
-    padding: 1rem;
+    padding: 2rem;
+    background-color: variables.$background-crypto-currency;
+    border-radius:1rem;
+    margin-top:2rem;
   }
 </style>

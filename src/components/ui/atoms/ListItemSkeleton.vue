@@ -33,14 +33,17 @@
     height: 100%;
     display:grid;
     grid-template-columns: repeat(var(--grid-lines-column), 1fr);
-    background-color: variables.$list-item-background;
+    background-color: variables.$background-list-item;
     padding: 1.3rem;  
-    border: 2px solid variables.$list-item-border;
+    border: 2px solid variables.$border-list-item;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
     border-radius:10px;
     gap:1rem;
 
     & + & {      
-      margin-top:8px;
+      margin-top:12px;
     }
 
     div:first-child {

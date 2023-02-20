@@ -8,7 +8,7 @@
         v-model="orderBySelected"
         :list="orderByList"
       >
-        <i class="bi bi-filter" />
+        Order By
       </Menu>
       <Menu
         v-model="orderSelected"
