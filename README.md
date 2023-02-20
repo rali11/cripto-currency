@@ -27,9 +27,9 @@
 
 ## Overview
 
-![screenshit](https://i.ibb.co/L5PFmrT/Captura-de-pantalla-2023-02-07-a-la-s-09-36-48.png)
+![screenshit](https://i.ibb.co/VNzf11P/Screenshot-2023-02-20-at-19-49-30-cripto-currency.png)
 
-![screenshot](https://i.ibb.co/9rpgKN4/Captura-de-pantalla-2023-02-07-a-la-s-09-37-46.png)
+![screenshot](https://i.ibb.co/RjkMcJm/Screenshot-2023-02-20-at-19-49-55-cripto-currency.png)
 
 ### Built With
 
