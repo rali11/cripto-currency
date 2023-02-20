@@ -2,7 +2,7 @@
   <div class="menu">
     <button
       @click="displayMenu"
-      @focusout="showMenu = !showMenu"
+      @focusout="showMenu = false"
       ref="btnMenu"
       class="menu__btn"
     >
@@ -59,7 +59,7 @@
         })
       },
       displayMenu(){
-        this.showMenu = !this.showMenu;
+        this.showMenu = true;
         this.$refs.btnMenu.focus();
       }
     }
@@ -72,23 +72,24 @@
   .menu {
     position: relative;
 
-    &__btn {
-      padding: .3rem .5rem;  
+    & + & {
+      margin-left: 10px;
+    }
+
+    &__btn {      
+      padding: .7rem;  
       display: flex;
       justify-content: center;
       align-items: center;
-      color:  variables.$list-item-label;
-      border: 2px solid transparent;
-      border-radius:5px;
-      background-color: transparent;
+      color:  variables.$font-menu;
+      border: 2.5px solid variables.$border-menu;
+      border-top-width: 0;
+      border-left-width: 0;
+      border-right-width: 0;
+      border-radius:10px;      
+      background-color: variables.$background-menu;  
       transition: all .3s;
-
-      &:hover, &:focus {
-        transition: all .3s;
-        border: 2px solid variables.$list-item-border;  
-        background-color: variables.$list-item-background;
-        color: black;
-      }
+      font-weight: 600;
     }
 
     &__hover-list {
@@ -97,13 +98,13 @@
       top:100%;
       right: 0;
       margin-top: .3rem;
-      border: 0px solid variables.$list-item-border; 
-      border-radius:5px; 
-      background-color: variables.$list-item-background;
-      font-size: .9rem;
+      border: 0px solid variables.$border-menu; 
+      border-radius:10px; 
+      background-color: variables.$background-menu;
+      font-weight: 500;
       padding: 0rem;
-      z-index: 1;
-      color:  variables.$list-item-label;
+      z-index: 1;      
+      color:  variables.$font-menu;
       overflow: hidden;
       box-shadow:
         0px 2.6px 2.2px rgba(0, 0, 0, 0.008),
@@ -120,8 +121,8 @@
       cursor: default;
 
       &:hover, &--selected {
-        color: black;
-        background-color: variables.$menu-item-background;
+        color:  variables.$font-menu;
+        background-color: variables.$background-menu-item-selected;
       }  
     }
     

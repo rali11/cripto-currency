@@ -119,15 +119,18 @@
 
     list-style: none;
     padding: 1.3rem;  
-    border: 2px solid variables.$list-item-border;
+    border: 2.5px solid variables.$border-list-item;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
     border-radius:10px;
-    background-color: variables.$list-item-background;
+    background-color: variables.$background-list-item;
     display:grid;
     grid-template-columns: repeat(2, 1fr);
     transition: all .9s ease-in-out;
 
     & + & {      
-      margin-top:8px;
+      margin-top:12px;
     }
 
     &__description {
@@ -140,7 +143,7 @@
       height: 3rem;
       width: 3rem;
       padding: 5px;
-      border: 1px solid variables.$list-item-logo-border;  
+      border: 1px solid variables.$border-list-item-logo;  
       border-radius: 50%; 
     }
     
@@ -182,8 +185,8 @@
     &__ticker,
     &__label {
       margin:0;
-      font-weight: 400;
-      color: variables.$list-item-label;
+      font-weight: 500;
+      color: variables.$font-list-item-label;
     }
 
     &__label {

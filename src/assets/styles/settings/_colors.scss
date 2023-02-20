@@ -4,11 +4,22 @@ $_spanish_gray: #95949d;
 $_white: white;
 $_anti_flash_white: #f2f3f5;
 $_bright_gray: #eee;
+$_bright_gray_2: #eae9f0;
+$_cultured: #f7f6f9;
+$_brilliant_azure: #3a8afa;
 
-$list-item-border: $_anti_flash_white;
-$list-item-background: $_white;
-$list-item-logo-border: $_bright_gray;
-$list-item-label: $_spanish_gray;
+$border-list-item: $_anti_flash_white;
+$border-list-item-logo: $_bright_gray;
+$border-menu: $_anti_flash_white;
+
+$font-list-item-label: $_spanish_gray;
+$font-menu: $_brilliant_azure;
+
+$background-menu-item-selected: $_bright_gray;
+$background-body: $_bright_gray_2;
+$background-crypto-currency: $_cultured;
+$background-list-item: $_white;
+$background-menu: $_white;
+
 $positive: $_mountain_meadow;
 $negative: $_carmine_pink;
-$menu-item-background: $_bright_gray;
