@@ -1,4 +1,4 @@
-const getInfoToken = async idToken => {
+export const getInfoToken = async idToken => {
   const response = await fetch(`https://api.coingecko.com/api/v3/coins/${idToken}`);
   const json = await response.json();
   return {
@@ -22,6 +22,13 @@ export const getListInfoToken = async arrayToken => {
 
 export const searchToken = async searchString => {
   const response = await fetch(`https://api.coingecko.com/api/v3/search?query=${searchString}`);
+  const { coins: searchResult } = await response.json();
+  return searchResult;
+}
+
+export const trendingTokensLast24hr = async () => {
+  const response = await fetch('https://api.coingecko.com/api/v3/search/trending');
   const { coins } = await response.json();
-  return coins;
+  const listCoinId = coins.map(({ item }) => item.id);
+  return listCoinId;
 }

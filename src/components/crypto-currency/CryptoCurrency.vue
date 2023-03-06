@@ -5,7 +5,7 @@
       :asc.sync="asc"  
     />
     <List 
-      :items="this.tokenList"
+      :items="this.listToken"
       :order-by="orderBy"
       :asc="asc"
     />
@@ -13,8 +13,8 @@
 </template>
 
 <script>
-  import {getListInfoToken} from '../../services/api/CoinGecko.js';
-  import {StreamCryptoMarket, StreamCryptoMarketObserver} from '../../services/api/BinanceStream.js';
+  import { getListInfoToken } from '../../services/api/CoinGecko.js';
+  import { StreamCryptoMarket, StreamCryptoMarketObserver } from '../../services/api/BinanceStream.js';
   import List from '../ui/molecules/List.vue';
   import ListFilter from '../ui/molecules/ListFilter.vue';
   import Card from '../ui/atoms/Card.vue';
@@ -23,32 +23,22 @@
     components:{List, ListFilter, Card},  
     data(){
       return {
-        tokens:[
-          'bitcoin',
-          'ethereum',
-          'binancecoin',
-          'cardano',
-          'solana',
-          'matic-network',
-          'pancakeswap-token',
-        ],
-        tokenList:[],    
+        listToken:[],    
         orderBy:'change',
         asc:false,
       }
     },
     mounted(){         
       this.getTokenList();
-    },    
+    }, 
     methods:{
       async getTokenList(){
-        const infoTokens = await getListInfoToken(this.tokens);
+        const listTokenId = ['bitcoin','ethereum','binancecoin','cardano','solana','matic-network'];
+        //const listTokenId = await trendingTokensLast24hr();
+        this.listToken = await getListInfoToken(listTokenId);
         const streamCryptoMarket = new StreamCryptoMarket();
-        const streamCryptoMarketObserver = new StreamCryptoMarketObserver(infoTokens);
+        const streamCryptoMarketObserver = new StreamCryptoMarketObserver(this.listToken);
         await streamCryptoMarket.addObserver(streamCryptoMarketObserver);
-        setInterval(() => {
-          this.tokenList = infoTokens.map(item => ({...item}));
-        }, 1000);
       }, 
     }
   }
