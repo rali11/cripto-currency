@@ -1,4 +1,4 @@
-export const getInfoToken = async idToken => {
+const getInfoToken = async idToken => {
   const response = await fetch(`https://api.coingecko.com/api/v3/coins/${idToken}`);
   const json = await response.json();
   return {
@@ -18,4 +18,10 @@ export const getListInfoToken = async arrayToken => {
     infoTokens.push(dataToken);
   } 
   return infoTokens;
+}
+
+export const searchToken = async searchString => {
+  const response = await fetch(`https://api.coingecko.com/api/v3/search?query=${searchString}`);
+  const { coins } = await response.json();
+  return coins;
 }

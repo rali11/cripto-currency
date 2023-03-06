@@ -1,6 +1,6 @@
 <template>
-  <div class="crypto-currency">
-    <ListHeader 
+  <Card class="crypto-currency">
+    <ListFilter 
       :order-by.sync="orderBy" 
       :asc.sync="asc"  
     />
@@ -9,17 +9,18 @@
       :order-by="orderBy"
       :asc="asc"
     />
-  </div>
+  </Card>
 </template>
 
 <script>
   import {getListInfoToken} from '../../services/api/CoinGecko.js';
   import {StreamCryptoMarket, StreamCryptoMarketObserver} from '../../services/api/BinanceStream.js';
   import List from '../ui/molecules/List.vue';
-  import ListHeader from '../ui/molecules/ListHeader.vue';
+  import ListFilter from '../ui/molecules/ListFilter.vue';
+  import Card from '../ui/atoms/Card.vue';
 
   export default {  
-    components:{List, ListHeader},  
+    components:{List, ListFilter, Card},  
     data(){
       return {
         tokens:[
@@ -31,23 +32,22 @@
           'matic-network',
           'pancakeswap-token',
         ],
-        infoTokens:[],
         tokenList:[],    
         orderBy:'change',
         asc:false,
       }
     },
-    mounted(){   
+    mounted(){         
       this.getTokenList();
     },    
     methods:{
       async getTokenList(){
-        this.infoTokens = await getListInfoToken(this.tokens);
+        const infoTokens = await getListInfoToken(this.tokens);
         const streamCryptoMarket = new StreamCryptoMarket();
-        const streamCryptoMarketObserver = new StreamCryptoMarketObserver(this.infoTokens);
+        const streamCryptoMarketObserver = new StreamCryptoMarketObserver(infoTokens);
         await streamCryptoMarket.addObserver(streamCryptoMarketObserver);
         setInterval(() => {
-          this.tokenList = this.infoTokens.map(item => ({...item}));
+          this.tokenList = infoTokens.map(item => ({...item}));
         }, 1000);
       }, 
     }
@@ -62,8 +62,7 @@
     flex-direction:column;
     gap: 5px;
     padding: 2rem;
-    background-color: variables.$background-crypto-currency;
-    border-radius:1rem;
     margin-top:2rem;
+    width: 700px;
   }
 </style>

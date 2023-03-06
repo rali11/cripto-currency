@@ -1,9 +1,9 @@
 <template>
-  <div class="list-header">
-    <h1 class="list-header__title">
+  <div class="list-filter">
+    <h1 class="list-filter__title">
       Currencies
     </h1>
-    <div class="list-header__order-by">
+    <div class="list-filter__order-by">
       <Menu
         v-model="orderBySelected"
         :list="orderByList"
@@ -61,9 +61,7 @@ import Menu from './Menu.vue'
 </script>
 
 <style lang="scss" scoped>
-  @use "@/assets/styles/settings/variables";
-
-  .list-header {
+  .list-filter {
     padding:.5rem .3rem;
     display:flex;
     flex-wrap: wrap;

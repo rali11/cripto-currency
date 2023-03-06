@@ -1,4 +1,6 @@
 /* eslint-disable */
+import _ from 'lodash';
+
 const streamUrl = "wss://stream.binance.com:9443/ws";
 
 export class StreamCryptoMarket {
