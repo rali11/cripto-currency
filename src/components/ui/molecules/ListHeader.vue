@@ -1,9 +1,12 @@
 <template>
-  <div class="list-filter">
-    <h1 class="list-filter__title">
+  <div 
+    :class="['list-header',listHeaderBackground]"
+    ref="listHeader"
+  >
+    <h1 class="list-header__title">
       Currencies
     </h1>
-    <div class="list-filter__order-by">
+    <div class="list-header__order-by">
       <Menu
         v-model="orderBySelected"
         :list="orderByList"
@@ -21,7 +24,8 @@
 </template>
 
 <script>
-import Menu from './Menu.vue'
+import Menu from './Menu.vue';
+
   export default {
     components: { Menu },
     props:{
@@ -38,6 +42,7 @@ import Menu from './Menu.vue'
       return {
         orderBySelected:this.orderBy,
         orderSelected:'desc',
+        listHeaderBackground:'',
         orderByList:[
           {value:'name',label:'Name',selected:false},
           {value:'price',label:'Price',selected:false},
@@ -48,6 +53,13 @@ import Menu from './Menu.vue'
           {value:'desc', label:'Desc.', selected:true}
         ]
       }
+    },
+    mounted(){
+      const listHeader = this.$refs.listHeader;
+      document.addEventListener('scroll',()=>{
+        const { top } = listHeader.getBoundingClientRect();
+        this.listHeaderBackground = top === 0 ? 'list-header--scrolled' : '';
+      })
     },
     watch:{
       orderBySelected(value){
@@ -61,13 +73,36 @@ import Menu from './Menu.vue'
 </script>
 
 <style lang="scss" scoped>
-  .list-filter {
-    padding:.5rem .3rem;
-    display:flex;
+  @use "@/assets/styles/settings/variables";
+
+  .list-header {
+    padding: .5rem .3rem;
+    display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     transition: all .9s ease-in-out;
     align-items: flex-end;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    width: 100vw;
+    margin-left: calc(((100vw - 100%) / 2) * -1);
+    padding-left: calc((100vw - 100%) / 2);
+    padding-right: calc((100vw - 100%) / 2);
+    background-color: transparent;
+    transition: all .2s;
+    border: 2.5px solid transparent;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+
+    &--scrolled {
+      background-color: variables.$background-list-header-scrolled;
+      border-color: variables.$border-menu;
+      transition: all .2s;      
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
 
     &__title {
       line-height: 0;
@@ -76,9 +111,10 @@ import Menu from './Menu.vue'
     &__order-by {
       align-self: center;
       display: flex;
-      font-size:1rem;
+      font-size: 1rem;
       text-transform: capitalize;
       height: 100%;
+      gap:10px;
     }
   }
 </style>

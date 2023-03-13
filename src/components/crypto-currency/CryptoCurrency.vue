@@ -1,6 +1,6 @@
 <template>
   <Card class="crypto-currency">
-    <ListFilter 
+    <ListHeader 
       :order-by.sync="orderBy" 
       :asc.sync="asc"  
     />
@@ -13,14 +13,14 @@
 </template>
 
 <script>
-  import { getListInfoToken } from '../../services/api/CoinGecko.js';
-  import { StreamCryptoMarket, StreamCryptoMarketObserver } from '../../services/api/BinanceStream.js';
-  import List from '../ui/molecules/List.vue';
-  import ListFilter from '../ui/molecules/ListFilter.vue';
-  import Card from '../ui/atoms/Card.vue';
+  import { getListInfoToken, searchToken, getInfoToken } from '@/services/api/CoinGecko.js';
+  import { StreamCryptoMarket, StreamCryptoMarketObserver } from '@/services/api/BinanceStream.js';
+  import List from '@/components/ui/molecules/List.vue';
+  import ListHeader from '@/components/ui/molecules/ListHeader.vue';
+  import Card from '@/components/ui/atoms/Card.vue';
 
   export default {  
-    components:{List, ListFilter, Card},  
+    components:{List, ListHeader, Card},  
     data(){
       return {
         listToken:[],    
@@ -28,18 +28,28 @@
         asc:false,
       }
     },
+    computed:{
+      listTokenId(){
+        return this.listToken.map(token => token.id);
+      }
+    },
     mounted(){         
-      this.getTokenList();
+      this.getTokenList();      
     }, 
     methods:{
       async getTokenList(){
-        const listTokenId = ['bitcoin','ethereum','binancecoin','cardano','solana','matic-network'];
-        //const listTokenId = await trendingTokensLast24hr();
+        const listTokenId = ['bitcoin','ethereum','binancecoin','cardano','solana','matic-network','pancakeswap-token'];        
+        //const listTokenId2 = await trendingTokensLast24hr();
         this.listToken = await getListInfoToken(listTokenId);
         const streamCryptoMarket = new StreamCryptoMarket();
         const streamCryptoMarketObserver = new StreamCryptoMarketObserver(this.listToken);
         await streamCryptoMarket.addObserver(streamCryptoMarketObserver);
       }, 
+      async addToken(){
+        const searchTokenResults = await searchToken('btc',this.listTokenId);
+        const newToken = await getInfoToken(searchTokenResults[0]);
+        this.listToken.push(newToken);
+      }
     }
   }
 </script>
@@ -47,12 +57,13 @@
 <style lang="scss" scoped>
   @use "@/assets/styles/settings/variables";
   
-  .crypto-currency{
+  .crypto-currency {
+    position: relative;
     display:flex;
     flex-direction:column;
     gap: 5px;
     padding: 2rem;
     margin-top:2rem;
-    width: 700px;
+    width: 700px;    
   }
 </style>

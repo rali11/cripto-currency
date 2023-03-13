@@ -2,6 +2,7 @@ $_mountain_meadow: #31c090;
 $_carmine_pink: #e94e4e;
 $_spanish_gray: #95949d;
 $_white: white;
+$_black: black;
 $_anti_flash_white: #f2f3f5;
 $_bright_gray: #eee;
 $_bright_gray_2: #eae9f0;
@@ -11,15 +12,22 @@ $_brilliant_azure: #3a8afa;
 $border-list-item: $_anti_flash_white;
 $border-list-item-logo: $_bright_gray;
 $border-menu: $_anti_flash_white;
+$border-btn: $_anti_flash_white;
 
 $font-list-item-label: $_spanish_gray;
 $font-menu: $_brilliant_azure;
+$font-btn-primary: $_anti_flash_white;
+$font-btn-secondary: $_white;
 
 $background-body: $_bright_gray_2;
 $background-card: $_cultured;
 $background-list-item: $_white;
+$background-list-header: $_cultured;
+$background-list-header-scrolled: $_cultured;
 $background-menu: $_white;
 $background-menu-item-selected: $_bright_gray;
+$background-btn-primary: $_brilliant_azure;
+$background-btn-secondary: $_spanish_gray;
 
 $positive: $_mountain_meadow;
 $negative: $_carmine_pink;
