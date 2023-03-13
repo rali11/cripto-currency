@@ -1,26 +1,21 @@
 <template>
   <div id="app">
-    <CryptoCurrency style="width:700px;" />
+    <Container tag="section">
+      <CryptoCurrency />
+    </Container>
   </div>
 </template>
 
 <script>
 import CryptoCurrency from './components/crypto-currency/CryptoCurrency.vue';
+import Container from './components/ui/objects/Container.vue';
 
 export default {
   name: 'App',
   components: {
-    CryptoCurrency
+    CryptoCurrency,
+    Container
   }
 }
 </script>
-<style scoped>
-  #app {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: columns;
-  }
-</style>
 

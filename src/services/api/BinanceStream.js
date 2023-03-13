@@ -1,4 +1,6 @@
 /* eslint-disable */
+import { Throttle } from "@/components/shared/Throttle";
+
 const streamUrl = "wss://stream.binance.com:9443/ws";
 
 export class StreamCryptoMarket {
@@ -7,16 +9,22 @@ export class StreamCryptoMarket {
   async addObserver(observerInstance){   
     !this.#webSocket && await this.#createWebSocket();
     this.#subscribeWebSocket(observerInstance.getParamSubscribeStream());
+    const self = this;
     this.#webSocket.addEventListener('message', event => {
-      observerInstance.notify(event, this);
+      Throttle(() => {
+        observerInstance.notify(event, self);
+      },250)
     });  
   }
 
   removeObserver(observerInstance){
     this.#unsubscribeWebSocket(observerInstance.getParamSubscribeStream());
-    this.#webSocket.removeEventListener('message', event => {
-      observerInstance.notify(event, this);
-    })
+    const self = this;
+    this.#webSocket.removeEventListener('message',event => {
+      Throttle(() => {
+        observerInstance.notify(event, self);
+      },250)
+    });
   }
 
   #createWebSocket(){
@@ -47,36 +55,42 @@ export class StreamCryptoMarket {
 }
 
 export class StreamCryptoMarketObserver {  
-  #infoTokens;
-  #infoTokensBefore;
+  #listToken;
+  #oldListToken;
 
-  constructor(infoTokens){
-    this.#infoTokens = infoTokens;
-    this.#infoTokensBefore = infoTokens.map(item => ({...item}));
+  constructor(listToken){
+    this.#listToken = listToken;
+    this.#oldListToken = listToken.map(item => ({...item}));
   }
 
-  notify(event, streamMarket){    
-    const data = JSON.parse(event.data);    
+  notify(event, streamCryptoMarket){    
+    const data = JSON.parse(event.data);
     if(data.e === 'trade'){
-      this.#infoTokens.find(item => data.s.toLowerCase().includes(item.symbol)).price = parseFloat(data.p);
+      const token = this.#listToken.find(item => data.s.toLowerCase().includes(item.symbol));
+      if(token){
+        token.price = parseFloat(data.p)
+      }
     }  
     if(data.e === '24hrTicker'){
-      this.#infoTokens.find(item => data.s.toLowerCase().includes(item.symbol)).change = parseFloat(data.P);
+      const token = this.#listToken.find(item => data.s.toLowerCase().includes(item.symbol));
+      if(token){
+        token.change = parseFloat(data.P);
+      }
     } 
-    if (this.#isInfoTokensDifferent()){    
-      this.#infoTokensBefore = this.#infoTokens.map(item => ({...item}));  
-      streamMarket.removeObserver(this);
-      streamMarket.addObserver(this);
+    if (this.#isListTokenModified()){  
+      streamCryptoMarket.removeObserver(this);
+      this.#oldListToken = this.#listToken.map(item => ({...item}));  
+      streamCryptoMarket.addObserver(this);
     }
   }
   
-  #isInfoTokensDifferent(){
-    const oldList = this.#infoTokensBefore.map(item => item.symbol);
-    const newList = this.#infoTokens.map(item => item.symbol);
-    if (oldList.length !== newList.length) {
+  #isListTokenModified(){
+    const oldListTokenSymbol = this.#oldListToken.map(item => item.symbol);
+    const listTokenSymbol = this.#listToken.map(item => item.symbol);
+    if (oldListTokenSymbol.length !== listTokenSymbol.length) {
       return true;
     }
-    const arrayDif = newList.filter(token => !oldList.includes(token));
+    const arrayDif = listTokenSymbol.filter(token => !oldListTokenSymbol.includes(token));
     if(arrayDif.length){
       return true;
     }
@@ -84,11 +98,12 @@ export class StreamCryptoMarketObserver {
   }
 
   getParamSubscribeStream(){
-    const tokensList = this.#infoTokens.map(item => item.symbol);
-    const tradeParameter = tokensList.join('usdt@trade;').concat('usdt@trade').split(';');
+    const listTokenSymbol = this.#oldListToken.map(item => item.symbol);
+    const tradeParameter = listTokenSymbol.join('usdt@trade;').concat('usdt@trade').split(';');
+    const tickerParameter = tradeParameter.map(item => item.replace('trade','ticker'));
     return [
       ...tradeParameter, 
-      ...tradeParameter.map(item => item.replace('trade','ticker'))
+      ...tickerParameter
     ];
   }
 }

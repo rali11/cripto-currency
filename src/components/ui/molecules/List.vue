@@ -72,7 +72,7 @@
     padding:0;
 
     &-enter, &-leave-to {
-    opacity: 0;
+      opacity: 0;
     }
     
     &-leave-active {

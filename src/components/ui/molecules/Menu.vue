@@ -72,10 +72,6 @@
   .menu {
     position: relative;
 
-    & + & {
-      margin-left: 10px;
-    }
-
     &__btn {      
       padding: .7rem;  
       display: flex;

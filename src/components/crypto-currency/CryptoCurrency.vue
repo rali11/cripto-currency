@@ -1,55 +1,55 @@
 <template>
-  <div class="crypto-currency">
+  <Card class="crypto-currency">
     <ListHeader 
       :order-by.sync="orderBy" 
       :asc.sync="asc"  
     />
     <List 
-      :items="this.tokenList"
+      :items="this.listToken"
       :order-by="orderBy"
       :asc="asc"
     />
-  </div>
+  </Card>
 </template>
 
 <script>
-  import {getListInfoToken} from '../../services/api/CoinGecko.js';
-  import {StreamCryptoMarket, StreamCryptoMarketObserver} from '../../services/api/BinanceStream.js';
-  import List from '../ui/molecules/List.vue';
-  import ListHeader from '../ui/molecules/ListHeader.vue';
+  import { getListInfoToken, searchToken, getInfoToken } from '@/services/api/CoinGecko.js';
+  import { StreamCryptoMarket, StreamCryptoMarketObserver } from '@/services/api/BinanceStream.js';
+  import List from '@/components/ui/molecules/List.vue';
+  import ListHeader from '@/components/ui/molecules/ListHeader.vue';
+  import Card from '@/components/ui/atoms/Card.vue';
 
   export default {  
-    components:{List, ListHeader},  
+    components:{List, ListHeader, Card},  
     data(){
       return {
-        tokens:[
-          'bitcoin',
-          'ethereum',
-          'binancecoin',
-          'cardano',
-          'solana',
-          'matic-network',
-          'pancakeswap-token',
-        ],
-        infoTokens:[],
-        tokenList:[],    
+        listToken:[],    
         orderBy:'change',
         asc:false,
       }
     },
-    mounted(){   
-      this.getTokenList();
-    },    
+    computed:{
+      listTokenId(){
+        return this.listToken.map(token => token.id);
+      }
+    },
+    mounted(){         
+      this.getTokenList();      
+    }, 
     methods:{
       async getTokenList(){
-        this.infoTokens = await getListInfoToken(this.tokens);
+        const listTokenId = ['bitcoin','ethereum','binancecoin','cardano','solana','matic-network','pancakeswap-token'];        
+        //const listTokenId2 = await trendingTokensLast24hr();
+        this.listToken = await getListInfoToken(listTokenId);
         const streamCryptoMarket = new StreamCryptoMarket();
-        const streamCryptoMarketObserver = new StreamCryptoMarketObserver(this.infoTokens);
+        const streamCryptoMarketObserver = new StreamCryptoMarketObserver(this.listToken);
         await streamCryptoMarket.addObserver(streamCryptoMarketObserver);
-        setInterval(() => {
-          this.tokenList = this.infoTokens.map(item => ({...item}));
-        }, 1000);
       }, 
+      async addToken(){
+        const searchTokenResults = await searchToken('btc',this.listTokenId);
+        const newToken = await getInfoToken(searchTokenResults[0]);
+        this.listToken.push(newToken);
+      }
     }
   }
 </script>
@@ -57,13 +57,13 @@
 <style lang="scss" scoped>
   @use "@/assets/styles/settings/variables";
   
-  .crypto-currency{
+  .crypto-currency {
+    position: relative;
     display:flex;
     flex-direction:column;
     gap: 5px;
     padding: 2rem;
-    background-color: variables.$background-crypto-currency;
-    border-radius:1rem;
     margin-top:2rem;
+    width: 700px;    
   }
 </style>
