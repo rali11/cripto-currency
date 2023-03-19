@@ -18,16 +18,18 @@
         :list="orderList"
       >
         <i class="bi bi-sort-down" />
-      </Menu>
-    </div>
+      </Menu>      
+    </div>    
+    <SearchBar />
   </div>
 </template>
 
 <script>
 import Menu from './Menu.vue';
+import SearchBar from './SearchBar.vue';
 
   export default {
-    components: { Menu },
+    components: { Menu, SearchBar },
     props:{
       orderBy:{
         default:'',
@@ -74,12 +76,10 @@ import Menu from './Menu.vue';
 
 <style lang="scss" scoped>
   @use "@/assets/styles/settings/variables";
-
-  .list-header {
-    padding: .5rem .3rem;
+  
+  .list-header {  
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
     transition: all .9s ease-in-out;
     align-items: flex-end;
     position: sticky;
@@ -87,8 +87,7 @@ import Menu from './Menu.vue';
     z-index: 1;
     width: 100vw;
     margin-left: calc(((100vw - 100%) / 2) * -1);
-    padding-left: calc((100vw - 100%) / 2);
-    padding-right: calc((100vw - 100%) / 2);
+    padding: .5rem calc((100vw - 100%) / 2);
     background-color: transparent;
     transition: all .2s;
     border: 2.5px solid transparent;
@@ -106,9 +105,11 @@ import Menu from './Menu.vue';
 
     &__title {
       line-height: 0;
+      margin-right: auto;
     }
 
     &__order-by {
+      padding-right: 3rem;
       align-self: center;
       display: flex;
       font-size: 1rem;

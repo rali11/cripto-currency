@@ -63,7 +63,7 @@
     flex-direction:column;
     gap: 5px;
     padding: 2rem;
-    margin-top:2rem;
-    width: 700px;    
+    margin-top: 2rem;
+    width: variables.$content-max-width;    
   }
 </style>
