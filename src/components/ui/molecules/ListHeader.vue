@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <header 
     :class="['list-header',listHeaderBackground]"
     ref="listHeader"
   >
@@ -18,16 +18,25 @@
         :list="orderList"
       >
         <i class="bi bi-sort-down" />
-      </Menu>
-    </div>
-  </div>
+      </Menu>      
+    </div>    
+    <SearchBar
+      v-model="resultSearchSelected"
+      :result-list="resultSearchList"
+      :loading="loadingSearchBar"
+      @text-search="processSearchValueToken"
+    />
+  </header>
 </template>
 
 <script>
 import Menu from './Menu.vue';
+import SearchBar from './SearchBar.vue';
+import { Debounce } from '@/components/shared/Utils';
+import { searchToken, getInfoToken } from '@/services/api/CoinGecko';
 
   export default {
-    components: { Menu },
+    components: { Menu, SearchBar },
     props:{
       orderBy:{
         default:'',
@@ -51,7 +60,11 @@ import Menu from './Menu.vue';
         orderList:[
           {value:'asc', label:'Asc.', selected:false},
           {value:'desc', label:'Desc.', selected:true}
-        ]
+        ],
+        resultSearchSelected:{},
+        resultSearchList:[],
+        processSearchValueToken:()=>{},
+        loadingSearchBar:false,
       }
     },
     mounted(){
@@ -60,6 +73,7 @@ import Menu from './Menu.vue';
         const { top } = listHeader.getBoundingClientRect();
         this.listHeaderBackground = top === 0 ? 'list-header--scrolled' : '';
       })
+      this.processSearchValueToken = Debounce(this.searchToken);
     },
     watch:{
       orderBySelected(value){
@@ -67,6 +81,33 @@ import Menu from './Menu.vue';
       },
       orderSelected(value){
         this.$emit('update:asc',value === 'asc' ? true : false);
+      },
+      resultSearchSelected({id}){
+        this.addSelectedToken(id);
+      }
+    },
+    methods:{
+      async searchToken(searchValue){
+        if (searchValue) {
+          this.loadingSearchBar = true;
+          const tokenExcluded = this.$store.getters.listTokenId;
+          const resultList = await searchToken(searchValue, tokenExcluded);
+          this.resultSearchList =  resultList.map(token => {
+           return {
+             id:token.id,
+             name:token.name,
+             tiker:token.symbol,
+             image:token.large,
+           }
+          });
+        } else {
+          this.resultSearchList = [];
+        }
+        this.loadingSearchBar = false;
+      },
+      async addSelectedToken(idToken){
+        const token = await getInfoToken(idToken);
+        this.$store.commit('addToken',token);
       }
     }
   }
@@ -74,12 +115,10 @@ import Menu from './Menu.vue';
 
 <style lang="scss" scoped>
   @use "@/assets/styles/settings/variables";
-
-  .list-header {
-    padding: .5rem .3rem;
+  
+  .list-header {  
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
     transition: all .9s ease-in-out;
     align-items: flex-end;
     position: sticky;
@@ -87,14 +126,11 @@ import Menu from './Menu.vue';
     z-index: 1;
     width: 100vw;
     margin-left: calc(((100vw - 100%) / 2) * -1);
-    padding-left: calc((100vw - 100%) / 2);
-    padding-right: calc((100vw - 100%) / 2);
+    padding: .5rem calc((100vw - 100%) / 2);
     background-color: transparent;
     transition: all .2s;
-    border: 2.5px solid transparent;
-    border-top-width: 0;
-    border-left-width: 0;
-    border-right-width: 0;
+    border: 0 solid transparent;
+    border-bottom-width: 2.5px;
 
     &--scrolled {
       background-color: variables.$background-list-header-scrolled;
@@ -106,9 +142,11 @@ import Menu from './Menu.vue';
 
     &__title {
       line-height: 0;
+      margin-right: auto;
     }
 
     &__order-by {
+      padding-right: 3rem;
       align-self: center;
       display: flex;
       font-size: 1rem;

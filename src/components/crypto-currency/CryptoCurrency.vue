@@ -13,17 +13,17 @@
 </template>
 
 <script>
-  import { getListInfoToken, searchToken, getInfoToken } from '@/services/api/CoinGecko.js';
+  import { getListInfoToken } from '@/services/api/CoinGecko.js';
   import { StreamCryptoMarket, StreamCryptoMarketObserver } from '@/services/api/BinanceStream.js';
   import List from '@/components/ui/molecules/List.vue';
   import ListHeader from '@/components/ui/molecules/ListHeader.vue';
   import Card from '@/components/ui/atoms/Card.vue';
+  import { mapGetters } from 'vuex';
 
   export default {  
     components:{List, ListHeader, Card},  
     data(){
       return {
-        listToken:[],    
         orderBy:'change',
         asc:false,
       }
@@ -31,25 +31,25 @@
     computed:{
       listTokenId(){
         return this.listToken.map(token => token.id);
-      }
+      },
+      ...mapGetters([
+        'listToken'
+      ])
     },
     mounted(){         
       this.getTokenList();      
     }, 
     methods:{
       async getTokenList(){
-        const listTokenId = ['bitcoin','ethereum','binancecoin','cardano','solana','matic-network','pancakeswap-token'];        
-        //const listTokenId2 = await trendingTokensLast24hr();
-        this.listToken = await getListInfoToken(listTokenId);
+        const listTokenId = ['ethereum','bitcoin','cardano'];    
+        const listToken = await getListInfoToken(listTokenId);
+        listToken.forEach(token => {
+          this.$store.commit('addToken', token);
+        });
         const streamCryptoMarket = new StreamCryptoMarket();
         const streamCryptoMarketObserver = new StreamCryptoMarketObserver(this.listToken);
         await streamCryptoMarket.addObserver(streamCryptoMarketObserver);
       }, 
-      async addToken(){
-        const searchTokenResults = await searchToken('btc',this.listTokenId);
-        const newToken = await getInfoToken(searchTokenResults[0]);
-        this.listToken.push(newToken);
-      }
     }
   }
 </script>
@@ -63,7 +63,7 @@
     flex-direction:column;
     gap: 5px;
     padding: 2rem;
-    margin-top:2rem;
-    width: 700px;    
+    margin-top: 2rem;
+    width: variables.$content-max-width;    
   }
 </style>
