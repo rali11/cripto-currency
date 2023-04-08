@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Throttle } from "@/components/shared/Throttle";
+import { Throttle } from "@/components/shared/Utils";
 
 const streamUrl = "wss://stream.binance.com:9443/ws";
 
@@ -13,7 +13,7 @@ export class StreamCryptoMarket {
     this.#webSocket.addEventListener('message', event => {
       Throttle(() => {
         observerInstance.notify(event, self);
-      },250)
+      },1000)
     });  
   }
 
@@ -23,7 +23,7 @@ export class StreamCryptoMarket {
     this.#webSocket.removeEventListener('message',event => {
       Throttle(() => {
         observerInstance.notify(event, self);
-      },250)
+      },1000)
     });
   }
 
