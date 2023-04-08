@@ -19,3 +19,16 @@ export const getListInfoToken = async arrayToken => {
   } 
   return infoTokens;
 }
+
+export const searchToken = async (searchString, excludeTokens = []) => {
+  const response = await fetch(`https://api.coingecko.com/api/v3/search?query=${searchString}`);
+  const { coins: searchResult } = await response.json();
+  return searchResult.filter(token => !excludeTokens.includes(token.id));
+}
+
+export const trendingTokensLast24hr = async () => {
+  const response = await fetch('https://api.coingecko.com/api/v3/search/trending');
+  const { coins } = await response.json();
+  const listTokenId = coins.map(({ item }) => item.id);
+  return listTokenId;
+}
