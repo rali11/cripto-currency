@@ -29,9 +29,6 @@
       }
     },
     computed:{
-      listTokenId(){
-        return this.listToken.map(token => token.id);
-      },
       ...mapGetters([
         'listToken'
       ])
