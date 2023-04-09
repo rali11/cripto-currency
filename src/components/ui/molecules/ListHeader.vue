@@ -21,19 +21,14 @@
       </Menu>      
     </div>    
     <SearchBar
-      v-model="resultSearchSelected"
       :result-list="resultSearchList"
-      :loading="loadingSearchBar"
-      @text-search="processSearchValueToken"
     />
   </header>
 </template>
 
 <script>
-import Menu from './Menu.vue';
-import SearchBar from './SearchBar.vue';
-import { Debounce } from '@/components/shared/Utils';
-import { searchToken, getInfoToken } from '@/services/api/CoinGecko';
+  import Menu from './Menu.vue';
+  import SearchBar from './SearchBar.vue';
 
   export default {
     components: { Menu, SearchBar },
@@ -61,9 +56,7 @@ import { searchToken, getInfoToken } from '@/services/api/CoinGecko';
           {value:'asc', label:'Asc.', selected:false},
           {value:'desc', label:'Desc.', selected:true}
         ],
-        resultSearchSelected:{},
         resultSearchList:[],
-        processSearchValueToken:()=>{},
         loadingSearchBar:false,
       }
     },
@@ -73,7 +66,6 @@ import { searchToken, getInfoToken } from '@/services/api/CoinGecko';
         const { top } = listHeader.getBoundingClientRect();
         this.listHeaderBackground = top === 0 ? 'list-header--scrolled' : '';
       })
-      this.processSearchValueToken = Debounce(this.searchToken);
     },
     watch:{
       orderBySelected(value){
@@ -82,34 +74,7 @@ import { searchToken, getInfoToken } from '@/services/api/CoinGecko';
       orderSelected(value){
         this.$emit('update:asc',value === 'asc' ? true : false);
       },
-      resultSearchSelected({id}){
-        this.addSelectedToken(id);
-      }
     },
-    methods:{
-      async searchToken(searchValue){
-        if (searchValue) {
-          this.loadingSearchBar = true;
-          const tokenExcluded = this.$store.getters.listTokenId;
-          const resultList = await searchToken(searchValue, tokenExcluded);
-          this.resultSearchList =  resultList.map(token => {
-           return {
-             id:token.id,
-             name:token.name,
-             tiker:token.symbol,
-             image:token.large,
-           }
-          });
-        } else {
-          this.resultSearchList = [];
-        }
-        this.loadingSearchBar = false;
-      },
-      async addSelectedToken(idToken){
-        const token = await getInfoToken(idToken);
-        this.$store.commit('addToken',token);
-      }
-    }
   }
 </script>
 

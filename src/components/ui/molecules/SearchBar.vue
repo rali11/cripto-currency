@@ -11,11 +11,11 @@
           type="text" 
           placeholder="Search..."
           v-model="inputValue"
-          @input="$emit('text-search', $event.target.value)"
+          @input="processSearchValueToken($event.target.value)"
           :class="['search-bar__input-search', showContent ? 'search-bar__input-search--show':'']"          
         >   
         <button 
-          v-if="!loading"
+          v-if="!loadingSearch"
           class="search-bar__btn-close" 
           @click="toggleSearchBar"           
         >
@@ -32,12 +32,19 @@
             v-for="(token, index) in resultList" 
             :key="index" 
             class="search-bar__item-results"
-            @click="$emit('select', token)"
+            @click="addSelectedToken(token)"
           >
             <img :src="token.image">
-            <p>{{ token.name }} <span>({{ token.tiker }})</span></p>
+            <p>{{ token.name }}<span>({{ token.tiker }})</span></p>
             <button-primary>
-              Add
+              <i 
+                v-if="!token.loading" 
+                class="bi bi-plus-lg"
+              />
+              <i
+                v-else
+                class="bi-arrow-clockwise search-bar__btn-loading-selected" 
+              />
             </button-primary>
           </div>
         </div>
@@ -48,48 +55,10 @@
 
 <script>
 import ButtonPrimary from '../atoms/ButtonPrimary.vue';
+import { searchToken, getInfoToken } from '@/services/api/CoinGecko';
+import { Debounce } from '@/components/shared/Utils';
 
   export default {
-    props:{
-      value:{
-        type:Object,
-        default:() => ({}),
-        validator: function(value){
-          const props = ['name','tiker','image','id'];
-          const propsValue = Object.keys(value);
-          propsValue.forEach(key => {
-            if(!props.includes(key)){
-              return false;
-            }
-          });
-          return true;          
-        }
-      },
-      resultList:{
-        type: Array,
-        default: () => [],
-        validator: function(value){
-          const props = ['name','tiker','image','id'];
-          value.forEach(item => {
-            const propsItem = Object.keys(item);
-            propsItem.forEach(key => {
-              if(!props.includes(key)){
-                return false;
-              }
-            });
-          });
-          return true;
-        }
-      },
-      loading:{
-        type:Boolean,
-        default:false,
-      },
-    },
-    model:{
-      prop:'value',
-      event:'select'
-    },
     components: { ButtonPrimary },
     data(){
       return {
@@ -98,6 +67,10 @@ import ButtonPrimary from '../atoms/ButtonPrimary.vue';
         inputValue:'',
         showResults:false,
         isToggleTransitionEnd:true,
+        loadingSearch:false,
+        loadingSelectedItem:false,
+        processSearchValueToken:()=>{},
+        resultList:[],
       }
     },
     mounted(){      
@@ -114,9 +87,15 @@ import ButtonPrimary from '../atoms/ButtonPrimary.vue';
       })
       inputSearch.addEventListener('transitionend',() => {
         this.isToggleTransitionEnd = true;
-      })
+      });
+      this.processSearchValueToken = Debounce(this.searchToken);
     },
     watch:{
+      inputValue(value){
+        if (value) {
+          this.loadingSearch = true;
+        }
+      },
       resultList(value){
         this.showResults = value.length ? true : false;
         const searchResults = document.querySelector('.search-bar__results');
@@ -139,6 +118,32 @@ import ButtonPrimary from '../atoms/ButtonPrimary.vue';
           } 
         }
       }, 
+      async searchToken(searchValue){
+        if (searchValue) {
+          const tokenExcluded = this.$store.getters.listTokenId;
+          const results = await searchToken(searchValue, tokenExcluded);
+          this.resultList =  results.map(token => {
+           return {
+             id:token.id,
+             name:token.name,
+             tiker:token.symbol,
+             image:token.large,
+             loading:false,
+           }
+          });
+        } else {
+          this.resultList = [];
+        }
+        this.loadingSearch = false;
+      },
+      async addSelectedToken(token){
+        token.loading = true;
+        const tokenSelected = await getInfoToken(token.id);
+        this.$store.commit('addToken',tokenSelected);
+        token.loading = false;
+        this.resultList = [];
+        this.toggleSearchBar();
+      }
     }
   }
 </script>
@@ -190,13 +195,19 @@ import ButtonPrimary from '../atoms/ButtonPrimary.vue';
         background-color: #eee;
       }
 
-      img {
-        height: 2rem;
-        width: 2rem;
+      p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       span {
         font-weight: 400;
+      }
+
+      img {
+        height: 2rem;
+        width: 2rem;
       }
 
       button {
@@ -297,7 +308,7 @@ import ButtonPrimary from '../atoms/ButtonPrimary.vue';
       transition: all .5s .4s ease;
     }
 
-    &__btn-loading {
+    &__btn-loading,&__btn-loading-selected {
       animation: .5s linear 0s infinite normal loading;
     }
   }
