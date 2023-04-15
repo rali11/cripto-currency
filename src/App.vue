@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <Container 
-      class="container"
       tag="section"
     >
       <CryptoCurrency />
@@ -28,7 +27,7 @@ export default {
   .container {
     display: flex;
     flex-direction: column;
-    gap:1.5rem;
-    margin-bottom: 1rem;
+    align-items: center;
+    gap: 2rem;
   }
 </style>
