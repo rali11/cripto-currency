@@ -1,7 +1,5 @@
 <template>  
-  <div 
-    :class="['search-bar', searchBarScrolled]" 
-  >
+  <Container :class="['search-bar', searchBarScrolled]">
     <div class="search-bar__body">
       <div 
         :class="['search-bar__btn', showContent ? 'search-bar__btn--show':'',showResults ? 'search-bar__btn--shadow':'']" 
@@ -50,16 +48,17 @@
         </div>
       </div>
     </div>
-  </div> 
+  </Container> 
 </template>
 
 <script>
 import ButtonPrimary from '../atoms/ButtonPrimary.vue';
 import { searchToken, getInfoToken } from '@/services/api/CoinGecko';
 import { Debounce } from '@/components/shared/Utils';
+import Container from '../objects/Container.vue';
 
   export default {
-    components: { ButtonPrimary },
+    components: { ButtonPrimary, Container },
     data(){
       return {
         searchBarScrolled:'',
@@ -152,14 +151,6 @@ import { Debounce } from '@/components/shared/Utils';
   @use "@/assets/styles/settings/variables";
 
   .search-bar {    
-    $padding-search-bar: calc((100vw - variables.$content-max-width) / 2);    
-
-    position: absolute;
-    top: .5rem;    
-    left: 0;
-    padding-left: $padding-search-bar;
-    padding-right: $padding-search-bar;
-    width: 100vw;
     transition: all .2s;
 
     &--scrolled {
@@ -215,9 +206,9 @@ import { Debounce } from '@/components/shared/Utils';
       }
     }
 
-    &__body {
-      margin: 0 2rem;      
+    &__body {     
       position: relative;
+      top:-43px;
     }
 
     &__btn {    

@@ -61,6 +61,6 @@
     gap: 5px;
     padding: 2rem;
     margin-top: 2rem;
-    width: variables.$content-max-width;    
+    width: 100%;
   }
 </style>

@@ -19,10 +19,26 @@
 </script>
 
 <style lang="scss" scoped>
+  @use "@/assets/styles/settings/variables";
+
   .container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: columns;
+    --container-width: #{variables.$mobile-xs};
+
+    width: var(--container-width);
+    margin:0 auto;
+
+    @media (min-width: variables.$mobile){
+      --container-width: #{variables.$mobile};
+    }
+
+    @media (min-width: variables.$tablet){
+      --container-width: #{variables.$tablet};
+    }
+
+    @media(min-width: variables.$desktop){
+      --container-width: #{variables.$desktop};
+    }
   }
+
+  
 </style>
