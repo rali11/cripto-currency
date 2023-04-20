@@ -30,7 +30,6 @@
   .lines {
     --grid-lines-column: 2;
 
-    height: 100%;
     display:grid;
     grid-template-columns: repeat(var(--grid-lines-column), 1fr);
     background-color: variables.$background-list-item;

@@ -1,12 +1,16 @@
 <template>
-  <div id="app">
+  <main 
+    id="app" 
+    class="app"
+  >
     <Container 
       tag="section"
+      class="crypto-currency"
     >
       <CryptoCurrency />
       <CoinGeckoMention />
     </Container>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -24,10 +28,18 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .container {
+  .app {
+    height: 100vh;
+    display: flex;
+    padding-top: 2rem;
+  }
+
+  .crypto-currency {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
+    margin:auto;
+    padding-bottom:1rem;
   }
 </style>

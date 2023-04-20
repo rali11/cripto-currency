@@ -3,35 +3,36 @@
     :class="['list-header',listHeaderBackground]"
     ref="listHeader"
   >
-    <h1 class="list-header__title">
-      Currencies
-    </h1>
-    <div class="list-header__order-by">
-      <Menu
-        v-model="orderBySelected"
-        :list="orderByList"
-      >
-        Order By
-      </Menu>
-      <Menu
-        v-model="orderSelected"
-        :list="orderList"
-      >
-        <i class="bi bi-sort-down" />
-      </Menu>      
-    </div>    
-    <SearchBar
-      :result-list="resultSearchList"
-    />
+    <Container class="list-header__container">
+      <h1 class="list-header__title">
+        Currencies
+      </h1>
+      <div class="list-header__order-by">
+        <Dropdown
+          v-model="orderBySelected"
+          :list="orderByList"
+        >
+          Order By
+        </Dropdown>
+        <Dropdown
+          v-model="orderSelected"
+          :list="orderList"
+        >
+          <i class="bi bi-sort-down" />
+        </Dropdown>      
+      </div>    
+      <SearchBar />
+    </Container>
   </header>
 </template>
 
 <script>
-  import Menu from './Menu.vue';
+  import Container from '../objects/Container.vue';
+  import Dropdown from './Dropdown.vue';
   import SearchBar from './SearchBar.vue';
 
   export default {
-    components: { Menu, SearchBar },
+    components: { Dropdown, SearchBar, Container },
     props:{
       orderBy:{
         default:'',
@@ -56,7 +57,6 @@
           {value:'asc', label:'Asc.', selected:false},
           {value:'desc', label:'Desc.', selected:true}
         ],
-        resultSearchList:[],
         loadingSearchBar:false,
       }
     },
@@ -81,11 +81,9 @@
 <style lang="scss" scoped>
   @use "@/assets/styles/settings/variables";
   
+  
   .list-header {  
     display: flex;
-    flex-wrap: wrap;
-    transition: all .9s ease-in-out;
-    align-items: flex-end;
     position: sticky;
     top: 0;
     z-index: 1;
@@ -96,6 +94,7 @@
     transition: all .2s;
     border: 0 solid transparent;
     border-bottom-width: 2.5px;
+    transition: all .2s ease-in-out;
 
     &--scrolled {
       background-color: variables.$background-list-header-scrolled;
@@ -105,19 +104,24 @@
       padding-bottom: 1rem;
     }
 
+    &__container {
+      display: flex;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
     &__title {
       line-height: 0;
       margin-right: auto;
     }
 
     &__order-by {
-      padding-right: 3rem;
-      align-self: center;
       display: flex;
       font-size: 1rem;
       text-transform: capitalize;
       height: 100%;
       gap:10px;
+      padding-right: 3rem;
     }
   }
 </style>
