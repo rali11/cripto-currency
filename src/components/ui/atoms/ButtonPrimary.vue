@@ -29,6 +29,7 @@
   .btn {
     padding: .7rem;  
     display: flex;
+    height: variables.$height-btn;
     justify-content: center;
     align-items: center;    
     border: 2.5px solid variables.$border-btn;

@@ -1,21 +1,21 @@
 <template>
-  <div class="menu">
+  <div class="dropdown">
     <button
       @click="displayMenu"
       @focusout="showMenu = false"
       ref="btnMenu"
-      class="menu__btn"
+      class="dropdown__btn"
     >
       <slot />
     </button>
-    <transition name="menu-anim">
+    <transition name="dropdown-anim">
       <ul
         v-show="showMenu" 
-        class="menu__hover-list"
+        class="dropdown__hover-list"
       >
         <li 
           v-for="(item, index) in list"
-          :class="['menu__hover-item', item.selected ? 'menu__hover-item--selected':'']"
+          :class="['dropdown__hover-item', item.selected ? 'dropdown__hover-item--selected':'']"
           @click="selected(item.value)"
           :key="index"
         >
@@ -69,7 +69,7 @@
 <style lang="scss" scoped>
   @use "@/assets/styles/settings/variables";
 
-  .menu {
+  .dropdown {
     position: relative;
 
     &__btn {      
@@ -91,7 +91,7 @@
     &__hover-list {
       list-style: none;
       position:absolute;
-      top:100%;
+      top: calc(variables.$height-btn + 1px);
       right: 0;
       margin-top: .3rem;
       border: 0px solid variables.$border-menu; 

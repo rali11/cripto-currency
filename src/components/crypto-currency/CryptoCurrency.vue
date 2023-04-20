@@ -1,5 +1,5 @@
 <template>
-  <Card class="crypto-currency">
+  <Card class="crypto-currency__card">
     <ListHeader 
       :order-by.sync="orderBy" 
       :asc.sync="asc"  
@@ -38,7 +38,7 @@
     }, 
     methods:{
       async getTokenList(){
-        const listTokenId = ['ethereum','bitcoin','cardano'];    
+        const listTokenId = ['ethereum','bitcoin','cardano','matic-network','binancecoin','pancakeswap-token','solana'];    
         const listToken = await getListInfoToken(listTokenId);
         listToken.forEach(token => {
           this.$store.commit('addToken', token);
@@ -52,15 +52,11 @@
 </script>
 
 <style lang="scss" scoped>
-  @use "@/assets/styles/settings/variables";
-  
-  .crypto-currency {
-    position: relative;
+  .crypto-currency__card {
     display:flex;
     flex-direction:column;
     gap: 5px;
     padding: 2rem;
-    margin-top: 2rem;
     width: 100%;
   }
 </style>

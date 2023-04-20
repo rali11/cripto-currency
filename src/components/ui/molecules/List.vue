@@ -34,7 +34,7 @@
   export default {
     components:{
       ListItem,
-        ListItemSkeleton,
+      ListItemSkeleton,
     },
     props:{
       items:{
