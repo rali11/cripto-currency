@@ -95,6 +95,7 @@ import SearchBarResults from './SearchBarResults.vue';
              tiker:token.symbol,
              image:token.large,
              loading:false,
+             isAdded:false,
            }
           });
         } else {

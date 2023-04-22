@@ -119,10 +119,8 @@
 
     list-style: none;
     padding: 1.3rem;  
-    border: 2.5px solid variables.$border-list-item;
-    border-top-width: 0;
-    border-left-width: 0;
-    border-right-width: 0;
+    border: 0 solid variables.$border-list-item;
+    border-bottom-width: 2.5px;
     border-radius:10px;
     background-color: variables.$background-list-item;
     display:grid;
@@ -150,6 +148,8 @@
     &__name {
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: 1rem;
     }   
 
     &__price {
