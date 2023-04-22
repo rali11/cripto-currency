@@ -11,7 +11,7 @@
         type:String,
         default:'primary',
         validator:function(role){
-          return ['primary','secondary'].includes(role);
+          return ['primary','secondary','success'].includes(role);
         }
       }
     },
@@ -48,6 +48,11 @@
     &--secondary {
       color:  variables.$font-btn-secondary;         
       background-color: variables.$background-btn-secondary;  
+    }
+
+    &--success {
+      color: variables.$font-btn-success;
+      background-color: variables.$background-btn-success;
     }
   }
 </style>
