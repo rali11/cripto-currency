@@ -30,19 +30,14 @@
     data(){
       return {
         showResults:false,
-        isTokenAdded:false,
       }
     },
-    
     watch:{
       resultList(value){
-        this.showResults = value.length ? true : false;
+        this.showResults = !!value.length;
+        const rows = value.length <= 4 ? value.length : 5;
         const searchResults = document.querySelector('.search-bar__results');
-        if (value.length <= 5) {      
-          searchResults.style.setProperty('--height-results',`${value.length * 60}px`);
-        } else {
-          searchResults.style.setProperty('--height-results',`${5 * 60}px`);
-        }
+        searchResults.style.setProperty('--height-results',`${rows * 60}px`);
       }
     },
     methods:{
@@ -52,8 +47,8 @@
         this.$store.commit('addToken',tokenSelected);
         token.loading = false;
         token.isAdded = true;
-        setTimeout(() => {
-         this.$emit('update:resultList',this.resultList.filter(item => item.id !== token.id));
+        setTimeout(()=>{
+          this.$emit('update:resultList',this.resultList.filter(item => item.id !== token.id));
         },300)
       }
     }
@@ -78,7 +73,7 @@
       overflow: scroll;
       background-color: white;
       border-radius: 10px; 
-     
+
       &--show {
         height: $height-results;
         box-shadow:

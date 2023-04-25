@@ -8,11 +8,16 @@ $_bright_gray: #eee;
 $_bright_gray_2: #eae9f0;
 $_cultured: #f7f6f9;
 $_brilliant_azure: #3a8afa;
+$_philippine_silver:#B2B1BA;
 
 $border-list-item: $_anti_flash_white;
 $border-list-item-logo: $_bright_gray;
 $border-menu: $_anti_flash_white;
 $border-btn: $_anti_flash_white;
+$border-btn-outline-primary: $_brilliant_azure;
+$border-btn-outline-secondary: $_spanish_gray;
+$border-btn-outline-success: $_mountain_meadow;
+$border-btn-outline-danger: $_carmine_pink;
 
 $font-list-item-label: $_spanish_gray;
 $font-result-item-ticker: $_spanish_gray;
@@ -20,6 +25,12 @@ $font-menu: $_brilliant_azure;
 $font-btn-primary: $_anti_flash_white;
 $font-btn-secondary: $_white;
 $font-btn-success: $_white;
+$font-btn-danger: $_white;
+$font-btn-light: $_philippine_silver;
+$font-btn-outline-primary: $_brilliant_azure;
+$font-btn-outline-secondary: $_spanish_gray;
+$font-btn-outline-success: $_mountain_meadow;
+$font-btn-outline-danger: $_carmine_pink;
 $font-url: $_brilliant_azure;
 
 $background-body: $_bright_gray_2;
@@ -32,6 +43,7 @@ $background-menu-item-selected: $_bright_gray;
 $background-btn-primary: $_brilliant_azure;
 $background-btn-secondary: $_spanish_gray;
 $background-btn-success: $_mountain_meadow;
+$background-btn-danger: $_carmine_pink;
 
 $positive: $_mountain_meadow;
 $negative: $_carmine_pink;

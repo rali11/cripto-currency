@@ -1,7 +1,7 @@
 <template>
   <li 
     class="search-bar__results-item"
-    @click="$emit('click')"
+    @click.once="$emit('click')"
   >
     <figure class="search-bar__item-logo">
       <img :src="token.image">
@@ -10,7 +10,8 @@
       <b>{{ token.name }}</b>
       <span>{{ token.tiker }}</span>
     </div>
-    <ButtonFilled :role="roleButton">
+    <Button :role="roleButton">
+      <span>Select&nbsp;&nbsp;</span>
       <i 
         v-if="!token.loading" 
         :class="iconButton"
@@ -19,16 +20,16 @@
         v-else
         class="bi-arrow-clockwise search-bar__btn-loading-selected" 
       />
-    </ButtonFilled>
+    </Button>
   </li>
 </template>
 
 <script>
-  import ButtonFilled from '@/components/ui/atoms/ButtonFilled.vue';
+  import Button from '@/components/ui/atoms/Button.vue';
 
   export default {
     components:{
-      ButtonFilled,
+      Button,
     },
     props:{
       token:{
@@ -50,10 +51,10 @@
     },
     computed:{
       roleButton(){
-        return this.token.isAdded ? 'success':'primary';
+        return this.token.isAdded ? 'success':'light';
       },
       iconButton(){
-        return this.token.isAdded ? 'bi bi-check-lg':'bi bi-plus-square-fill';
+        return this.token.isAdded ? 'bi bi-check-lg':'bi bi-arrow-left-square-fill';
       }
     },
   }
@@ -69,8 +70,9 @@
       height: 60px;
       gap: 1rem;
       border: 0 solid #eee;
-      border-top-width: 1px;
+      border-bottom-width: 1px;
       list-style: none;
+      font-size: .9rem;
       transition: all .5s ease-in-out;
       
       &:hover {

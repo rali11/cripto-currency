@@ -3,7 +3,7 @@
     <div :class="['search-bar__body', isExpanded ? 'search-bar__body--expanded':'']">        
       <button 
         class="search-bar__btn-open"
-        @click="openSearchBar"  
+        @click="expandSearchBar"  
       >
         <i class="bi bi-search" />
       </button>
@@ -11,13 +11,13 @@
         type="text" 
         placeholder="Search Token..."
         v-model="inputValue"
-        @input="processSearchValueToken($event.target.value)"
+        @input="debouncedSearchToken($event.target.value)"
         :class="['search-bar__input-search', isExpanded ? 'search-bar__input-search--expanded':'']"          
       >   
       <button 
         v-if="!loadingSearch"
         class="search-bar__btn-close"  
-        @click="closeSearchBar"        
+        @click="shrinkSearchBar"        
       >
         <i :class="['bi bi-x-lg', isExpanded ? 'bi--show':'']" />
       </button>  
@@ -45,7 +45,7 @@ import SearchBarResults from './SearchBarResults.vue';
         inputValue:'',
         isToggleTransitionEnd:true,
         loadingSearch:false,
-        processSearchValueToken:()=>{},
+        debouncedSearchToken:()=>{},
         resultList:[],
       }
     },
@@ -54,22 +54,18 @@ import SearchBarResults from './SearchBarResults.vue';
       inputSearch.addEventListener('transitionend',() => {
         this.isToggleTransitionEnd = true;
       });
-      this.processSearchValueToken = Debounce(this.searchToken);
+      this.debouncedSearchToken = Debounce(this.searchToken);
     },
     watch:{
       inputValue(value){
         if (value) {
+          this.resultList = [];
           this.loadingSearch = true;
         }
       },
-      resultList(value){
-        if(!value.length){
-          this.closeSearchBar();
-        }
-      }
     },
     methods: {
-      openSearchBar(){
+      expandSearchBar(){
         if (this.isToggleTransitionEnd && !this.isExpanded){
           this.isToggleTransitionEnd = false;
           this.isExpanded = !this.isExpanded;
@@ -77,7 +73,7 @@ import SearchBarResults from './SearchBarResults.vue';
           this.inputValue = '';
         }
       },
-      closeSearchBar(){
+      shrinkSearchBar(){
         if (this.isToggleTransitionEnd && this.isExpanded) {
           this.isToggleTransitionEnd = false;
           this.isExpanded = !this.isExpanded;
@@ -98,8 +94,6 @@ import SearchBarResults from './SearchBarResults.vue';
              isAdded:false,
            }
           });
-        } else {
-          this.resultList = [];
         }
         this.loadingSearch = false;
       },

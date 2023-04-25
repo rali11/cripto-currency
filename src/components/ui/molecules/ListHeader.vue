@@ -20,6 +20,12 @@
         >
           <i class="bi bi-sort-down" />
         </Dropdown>      
+        <CheckButton 
+          v-model="modeDelete"
+          role="danger"
+        >
+          <i class="bi bi-trash-fill" />
+        </CheckButton>
       </div>    
       <SearchBar />
     </Container>
@@ -27,12 +33,13 @@
 </template>
 
 <script>
+  import CheckButton from '../atoms/CheckButton.vue';
   import Container from '../objects/Container.vue';
   import Dropdown from './Dropdown.vue';
   import SearchBar from './SearchBar.vue';
 
   export default {
-    components: { Dropdown, SearchBar, Container },
+    components: { Dropdown, SearchBar, Container, CheckButton },
     props:{
       orderBy:{
         default:'',
@@ -58,6 +65,7 @@
           {value:'desc', label:'Desc.', selected:true}
         ],
         loadingSearchBar:false,
+        modeDelete:false,
       }
     },
     mounted(){
@@ -74,6 +82,9 @@
       orderSelected(value){
         this.$emit('update:asc',value === 'asc' ? true : false);
       },
+      modeDelete(value){
+        this.$store.commit('changeModeDelete', value);
+      }
     },
   }
 </script>

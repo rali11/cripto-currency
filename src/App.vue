@@ -1,7 +1,6 @@
 <template>
   <main 
     id="app" 
-    class="app"
   >
     <Container 
       tag="section"
@@ -28,18 +27,13 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .app {
-    height: 100vh;
-    display: flex;
-    padding-top: 2rem;
-  }
 
   .crypto-currency {
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    margin:auto;
     padding-bottom:1rem;
   }
 </style>
