@@ -1,14 +1,20 @@
 <template>
   <Card class="crypto-currency__card">
-    <ListHeader 
-      :order-by.sync="orderBy" 
-      :asc.sync="asc"  
-    />
-    <List 
-      :items="this.listToken"
-      :order-by="orderBy"
-      :asc="asc"
-    />
+    <div 
+      class="crypto-currency__card-body" 
+      ref="cardBody"
+    >
+      <ListHeader 
+        :order-by.sync="orderBy" 
+        :asc.sync="asc"  
+      />
+      <List 
+        :items="this.listToken"
+        :order-by="orderBy"
+        :asc="asc"
+        @update-height="resizeCardHeight"
+      />
+    </div>
   </Card>
 </template>
 
@@ -30,13 +36,25 @@
     },
     computed:{
       ...mapGetters([
-        'listToken'
+        'listToken',
       ])
     },
-    mounted(){         
-      this.getTokenList();      
+    mounted(){          
+      this.getTokenList();   
     }, 
     methods:{
+      resizeCardHeight(){
+        const card =  document.querySelector('.crypto-currency__card');
+        const cardStyles = window.getComputedStyle(card, null);
+        const cardPaddingTop = parseFloat(cardStyles.getPropertyValue('padding-top'));
+        const cardPaddingBottom = parseFloat(cardStyles.getPropertyValue('padding-bottom'));
+
+        const cardBody = this.$refs.cardBody;
+        const cardBodyStyles = window.getComputedStyle(cardBody, null);
+        const cardBodyHeight = parseFloat(cardBodyStyles.getPropertyValue('height'));
+        
+        card.style.setProperty('--height-card',`${cardPaddingTop + cardPaddingBottom + cardBodyHeight}px`);
+      },
       async getTokenList(){
         const listTokenId = ['ethereum','bitcoin','cardano','matic-network','binancecoin','pancakeswap-token','solana'];    
         const listToken = await getListInfoToken(listTokenId);
@@ -53,10 +71,21 @@
 
 <style lang="scss" scoped>
   .crypto-currency__card {
+    --height-card:auto;
+    $height-card: var(--height-card);
+
     display:flex;
     flex-direction:column;
     gap: 5px;
     padding: 2rem;
     width: 100%;
+    height: $height-card;
+    transition: height .9s ease;
+
+    &-body {
+      position: relative;
+      height: auto;
+      width: 100%;
+    }
   }
 </style>

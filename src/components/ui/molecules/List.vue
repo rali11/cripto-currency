@@ -1,5 +1,5 @@
 <template> 
-  <div>   
+  <div class="list-container">   
     <template v-if="items.length !== 0">
       <transition-group 
         name="list" 
@@ -14,6 +14,8 @@
           :name="item.name"
           :price="item.price"
           :change="item.change"
+          :mode-delete="isModeDeleteList"
+          @delete-event="deleteToken(item)"
         />
       </transition-group> 
     </template> 
@@ -30,6 +32,7 @@
   import ListItem from "../atoms/ListItem.vue";
   import _ from 'lodash';
   import ListItemSkeleton from '../atoms/ListItemSkeleton.vue';
+  import { mapGetters } from 'vuex';
 
   export default {
     components:{
@@ -56,13 +59,24 @@
       }
     },
     computed:{
+      ...mapGetters([
+        'isModeDeleteList',
+      ]),
       order(){
         return this.asc ? 'asc':'desc';
       },
       sortList(){
         return _.orderBy(this.items,[this.orderBy],[this.order]);
       }
-    },   
+    },  
+    updated(){
+      this.$emit('update-height');
+    },
+    methods:{
+      deleteToken(token){
+        this.$store.commit('deleteToken',token);
+      },
+    }
   }
 </script>
 <style lang="scss" scoped>

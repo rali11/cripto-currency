@@ -1,10 +1,26 @@
 <template>
   <li class="list-item">
     <section class="list-item__description">
-      <img 
-        class="list-item__logo"
-        :src="logo" 
+      <transition 
+        name="slide-fade" 
+        mode="out-in"
       >
+        <Button 
+          v-if="modeDelete"
+          key="delete"
+          role="danger" 
+          class="list-item__logo"
+          @click.once="$emit('delete-event')"
+        >
+          <i class="bi bi-trash-fill" />
+        </Button> 
+        <img 
+          v-else
+          key="img"
+          class="list-item__logo"
+          :src="logo" 
+        >
+      </transition>
       <div class="list-item__description-text">         
         <p class="list-item__ticker">
           {{ ticker|mayus }}
@@ -42,8 +58,10 @@
 <script>
   import { gsap } from "gsap";
   import 'bootstrap-icons/font/bootstrap-icons.css';
+  import Button from './Button.vue';
 
   export default {
+  components: { Button },
     props:{
       logo:{
         type:String,
@@ -65,6 +83,10 @@
         type: Number,
         default:0,
       },
+      modeDelete:{
+        type: Boolean,
+        default:false,
+      }
     },
     data() {
       return {
@@ -204,5 +226,13 @@
       --price-text-align: start;
       --order-ticker: -1;
     }  
+  }
+
+  .slide-fade-enter-active, .slide-fade-leave-active {
+    transition: all .3s ease;
+  }
+  .slide-fade-enter, .slide-fade-leave-to {
+    transform: translateX(-10px);
+    opacity: 0;
   }
 </style>
