@@ -65,6 +65,12 @@ $ git clone https://github.com/rali11/cripto-currency
 # Install dependencies
 $ npm install
 
+# Activate hooks
+$ npx husky install
+
+# Add hooks
+$ npx husky add .husky/commit-msg  'npx --no -- commitlint --edit ${1}'
+
 # Compiles and hot-reloads for development
 $ npm run serve
 
