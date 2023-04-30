@@ -54,7 +54,7 @@
       ])
     },  
     updated(){
-      this.$emit('update-height');
+      this.$emit('update-listener');
     },
     methods:{
       deleteToken(token){

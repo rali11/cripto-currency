@@ -1,5 +1,8 @@
 <template>
-  <Card class="crypto-currency__card">
+  <Card 
+    class="crypto-currency__card"
+    :style="styleCard"
+  >
     <div 
       class="crypto-currency__card-body" 
       ref="cardBody"
@@ -8,7 +11,7 @@
       <List 
         :items="sortedListToken"
         :loading="loading"
-        @update-height="resizeCardHeight"
+        @update-listener="resizeCardHeight"
       />
     </div>
   </Card>
@@ -27,6 +30,10 @@
     data(){
       return {
         loading:false,
+        styleCard:{
+          padding:'32px',
+          height:'auto',
+        }
       }
     },
     computed:{
@@ -39,16 +46,9 @@
     }, 
     methods:{
       resizeCardHeight(){
-        const card =  document.querySelector('.crypto-currency__card');
-        const cardStyles = window.getComputedStyle(card, null);
-        const cardPaddingTop = parseFloat(cardStyles.getPropertyValue('padding-top'));
-        const cardPaddingBottom = parseFloat(cardStyles.getPropertyValue('padding-bottom'));
-
-        const cardBody = this.$refs.cardBody;
-        const cardBodyStyles = window.getComputedStyle(cardBody, null);
-        const cardBodyHeight = parseFloat(cardBodyStyles.getPropertyValue('height'));
-        
-        card.style.setProperty('--height-card',`${cardPaddingTop + cardPaddingBottom + cardBodyHeight}px`);
+        const cardBodyStyles = window.getComputedStyle(this.$refs.cardBody, null);
+        const cardBodyStylesHeight = parseFloat(cardBodyStyles.getPropertyValue('height'));
+        this.styleCard.height = `${cardBodyStylesHeight + (parseFloat(this.styleCard.padding) * 2)}px`;
       },
       async getTokenList(){
         this.loading = true;
@@ -68,15 +68,10 @@
 
 <style lang="scss" scoped>
   .crypto-currency__card {
-    --height-card:auto;
-    $height-card: var(--height-card);
-
     display:flex;
     flex-direction:column;
     gap: 5px;
-    padding: 2rem;
     width: 100%;
-    height: $height-card;
     transition: height .9s ease;
 
     &-body {
