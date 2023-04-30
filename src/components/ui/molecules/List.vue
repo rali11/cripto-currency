@@ -1,13 +1,19 @@
 <template> 
   <div class="list-container">   
-    <template v-if="items.length !== 0">
+    <template v-if="loading">
+      <ListItemSkeleton 
+        v-for="n in 7" 
+        :key="n"
+      />
+    </template>
+    <template v-else-if="items.length">
       <transition-group 
         name="list" 
         tag="ul"
         class="list"
       >            
         <ListItem
-          v-for="item in sortList"
+          v-for="item in items"
           :key="item.id"
           :logo="item.img"
           :ticker="item.symbol"
@@ -19,18 +25,11 @@
         />
       </transition-group> 
     </template> 
-    <template v-else>
-      <ListItemSkeleton 
-        v-for="n in 7" 
-        :key="n"
-      />
-    </template>
   </div>  
 </template>
 
 <script>
   import ListItem from "../atoms/ListItem.vue";
-  import _ from 'lodash';
   import ListItemSkeleton from '../atoms/ListItemSkeleton.vue';
   import { mapGetters } from 'vuex';
 
@@ -44,30 +43,15 @@
         type: Array,
         default:()=>[],
       },
-      orderBy:{
-        type:String,
-        default:'',
-      },
-      asc:{
+      loading:{
         type:Boolean,
-        default:true
-      }
-    },
-    data(){
-      return {
-        loading:true,
+        default:false,
       }
     },
     computed:{
       ...mapGetters([
         'isModeDeleteList',
-      ]),
-      order(){
-        return this.asc ? 'asc':'desc';
-      },
-      sortList(){
-        return _.orderBy(this.items,[this.orderBy],[this.order]);
-      }
+      ])
     },  
     updated(){
       this.$emit('update-height');

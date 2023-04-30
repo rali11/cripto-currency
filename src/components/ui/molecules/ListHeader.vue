@@ -40,20 +40,10 @@
 
   export default {
     components: { Dropdown, SearchBar, Container, CheckButton },
-    props:{
-      orderBy:{
-        default:'',
-        type:String,
-      },
-      asc:{
-        default:false,
-        type:Boolean,
-      }
-    },
     data(){
       return {
-        orderBySelected:this.orderBy,
-        orderSelected:'desc',
+        orderBySelected:'change',
+        orderSelected:false,
         listHeaderBackground:'',
         orderByList:[
           {value:'name',label:'Name',selected:false},
@@ -61,14 +51,16 @@
           {value:'change',label:'Change',selected:true},
         ],
         orderList:[
-          {value:'asc', label:'Asc.', selected:false},
-          {value:'desc', label:'Desc.', selected:true}
+          {value:true, label:'Asc.', selected:false},
+          {value:false, label:'Desc.', selected:true}
         ],
         loadingSearchBar:false,
         modeDelete:false,
       }
     },
     mounted(){
+      this.$store.commit('changeSort',this.orderSelected);
+      this.$store.commit('setOrderBy',this.orderBySelected);
       const listHeader = this.$refs.listHeader;
       document.addEventListener('scroll',()=>{
         const { top } = listHeader.getBoundingClientRect();
@@ -77,10 +69,10 @@
     },
     watch:{
       orderBySelected(value){
-        this.$emit('update:orderBy',value);
+        this.$store.commit('setOrderBy',value);
       },
       orderSelected(value){
-        this.$emit('update:asc',value === 'asc' ? true : false);
+        this.$store.commit('changeSort',value);
       },
       modeDelete(value){
         this.$store.commit('changeModeDelete', value);
