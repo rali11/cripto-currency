@@ -4,14 +4,10 @@
       class="crypto-currency__card-body" 
       ref="cardBody"
     >
-      <ListHeader 
-        :order-by.sync="orderBy" 
-        :asc.sync="asc"  
-      />
+      <ListHeader />
       <List 
-        :items="this.listToken"
-        :order-by="orderBy"
-        :asc="asc"
+        :items="sortedListToken"
+        :loading="loading"
         @update-height="resizeCardHeight"
       />
     </div>
@@ -30,13 +26,12 @@
     components:{List, ListHeader, Card},  
     data(){
       return {
-        orderBy:'change',
-        asc:false,
+        loading:false,
       }
     },
     computed:{
       ...mapGetters([
-        'listToken',
+        'sortedListToken',
       ])
     },
     mounted(){          
@@ -56,14 +51,16 @@
         card.style.setProperty('--height-card',`${cardPaddingTop + cardPaddingBottom + cardBodyHeight}px`);
       },
       async getTokenList(){
+        this.loading = true;
         const listTokenId = ['ethereum','bitcoin','cardano','matic-network','binancecoin','pancakeswap-token','solana'];    
         const listToken = await getListInfoToken(listTokenId);
         listToken.forEach(token => {
           this.$store.commit('addToken', token);
         });
         const streamCryptoMarket = new StreamCryptoMarket();
-        const streamCryptoMarketObserver = new StreamCryptoMarketObserver(this.listToken);
+        const streamCryptoMarketObserver = new StreamCryptoMarketObserver(this.sortedListToken);
         await streamCryptoMarket.addObserver(streamCryptoMarketObserver);
+        this.loading = false;
       }, 
     }
   }

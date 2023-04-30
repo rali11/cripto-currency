@@ -38,7 +38,7 @@
         default:() => {}
       },
       value:{
-        type:String,
+        type:[Boolean, String, Number],
         default:'',
       }
     },
@@ -50,11 +50,7 @@
     methods:{
       selected(value){
         this.list.forEach(item => {
-          if(item.value === value){
-            item.selected = true;
-          } else {
-            item.selected = false;
-          }
+          item.selected = item.value === value;
           this.$emit('selected', value);
         })
       },
