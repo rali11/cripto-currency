@@ -1,110 +1,82 @@
-/* eslint-disable */
+// /* eslint-disable */
+import store from "@/store";
 import { Throttle } from "@/components/shared/Utils";
+import Vue from "vue";
 
-const streamUrl = "wss://stream.binance.com:9443/ws";
+const vm = new Vue();
 
-export class StreamCryptoMarket {
-  #webSocket;
-
-  async addObserver(observerInstance){   
-    !this.#webSocket && await this.#createWebSocket();
-    this.#subscribeWebSocket(observerInstance.getParamSubscribeStream());
-    const self = this;
-    this.#webSocket.addEventListener('message', event => {
-      Throttle(() => {
-        observerInstance.notify(event, self);
-      },1000)
-    });  
-  }
-
-  removeObserver(observerInstance){
-    this.#unsubscribeWebSocket(observerInstance.getParamSubscribeStream());
-    const self = this;
-    this.#webSocket.removeEventListener('message',event => {
-      Throttle(() => {
-        observerInstance.notify(event, self);
-      },1000)
+const getWebSocket = () => {
+    return new Promise((resolve, reject) => {
+      const webSocket = new WebSocket("wss://stream.binance.com:9443/ws");
+      webSocket.addEventListener('open', () => resolve(webSocket));
+      webSocket.addEventListener('error', () => reject());
     });
   }
 
-  #createWebSocket(){
-    return new Promise((resolve, reject) => {
-      this.#webSocket = new WebSocket(streamUrl);
-      this.#webSocket.addEventListener('open', () => resolve());
-      this.#webSocket.addEventListener('error', event => reject());
-    });    
-  }
+const getParamSubscribeStream = listToken => {
+  const listTokenSymbol = listToken.map(
+    (item) => item.symbol
+  );
+  const tradeParameter = listTokenSymbol
+    .join("usdt@trade;")
+    .concat("usdt@trade")
+    .split(";");
+  const tickerParameter = tradeParameter.map((item) =>
+    item.replace("trade", "ticker")
+  );
+  return [...tradeParameter, ...tickerParameter];
+};
 
-  #subscribeWebSocket(getParamSubscribeStream){        
+export const binanceStream = async () => {
+  const webSocket = await getWebSocket();
+  webSocket.addEventListener("message", (event) => {
+    Throttle(() => {
+      const data = JSON.parse(event.data);
+      if (data.e === "trade") {
+        const token = store.getters.sortedListToken.find((item) =>
+          data.s.toLowerCase().includes(item.symbol)
+        );
+        if (token) {
+          Vue.set(token, "price", parseFloat(data.p));
+        }
+      }
+      if (data.e === "24hrTicker") {
+        const token = store.getters.sortedListToken.find((item) =>
+          data.s.toLowerCase().includes(item.symbol)
+        );
+        if (token) {
+          store.commit("changeToken", token);
+          Vue.set(token, "change", parseFloat(data.P));
+        }
+      }
+    }, 1000);
+  });
+
+  const subscribeWebSocket = () => {
     const data = {
       method:"SUBSCRIBE",
-      params: getParamSubscribeStream,
+      params: getParamSubscribeStream(store.getters.sortedListToken),
       id:1,
-    }    
-    this.#webSocket?.send(JSON.stringify(data));
+    }
+    webSocket.send(JSON.stringify(data));
   }
 
-  #unsubscribeWebSocket(getParamSubscribeStream){
+  const unsubscribeWebSocket = () => {
     const data = {
       method:"UNSUBSCRIBE",
-      params: getParamSubscribeStream,
+      params: getParamSubscribeStream(store.getters.sortedListToken),
       id:1,
-    }    
-    this.#webSocket.send(JSON.stringify(data));
-  }
-}
-
-export class StreamCryptoMarketObserver {  
-  #listToken;
-  #oldListToken;
-
-  constructor(listToken){
-    this.#listToken = listToken;
-    this.#oldListToken = listToken.map(item => ({...item}));
-  }
-
-  notify(event, streamCryptoMarket){    
-    const data = JSON.parse(event.data);
-    if(data.e === 'trade'){
-      const token = this.#listToken.find(item => data.s.toLowerCase().includes(item.symbol));
-      if(token){
-        token.price = parseFloat(data.p)
-      }
-    }  
-    if(data.e === '24hrTicker'){
-      const token = this.#listToken.find(item => data.s.toLowerCase().includes(item.symbol));
-      if(token){
-        token.change = parseFloat(data.P);
-      }
-    } 
-    if (this.#isListTokenModified()){  
-      streamCryptoMarket.removeObserver(this);
-      this.#oldListToken = this.#listToken.map(item => ({...item}));  
-      streamCryptoMarket.addObserver(this);
     }
-  }
-  
-  #isListTokenModified(){
-    const oldListTokenSymbol = this.#oldListToken.map(item => item.symbol);
-    const listTokenSymbol = this.#listToken.map(item => item.symbol);
-    if (oldListTokenSymbol.length !== listTokenSymbol.length) {
-      return true;
-    }
-    const arrayDif = listTokenSymbol.filter(token => !oldListTokenSymbol.includes(token));
-    if(arrayDif.length){
-      return true;
-    }
-    return false;
+    webSocket.send(JSON.stringify(data));
   }
 
-  getParamSubscribeStream(){
-    const listTokenSymbol = this.#oldListToken.map(item => item.symbol);
-    const tradeParameter = listTokenSymbol.join('usdt@trade;').concat('usdt@trade').split(';');
-    const tickerParameter = tradeParameter.map(item => item.replace('trade','ticker'));
-    return [
-      ...tradeParameter, 
-      ...tickerParameter
-    ];
-  }
-}
+  subscribeWebSocket();
 
+  vm.$watch(
+    () => store.state.listToken,
+    (newVal, oldVal) => {
+      unsubscribeWebSocket(getParamSubscribeStream(oldVal));
+      subscribeWebSocket(getParamSubscribeStream(newVal));
+    }
+  );
+};
