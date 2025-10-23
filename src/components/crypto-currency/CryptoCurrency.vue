@@ -19,7 +19,7 @@
 
 <script>
   import { getListInfoToken } from '@/services/api/CoinGecko.js';
-  import { StreamCryptoMarket, StreamCryptoMarketObserver } from '@/services/api/BinanceStream.js';
+  import { binanceStream } from '@/services/api/BinanceStream';
   import List from '@/components/ui/molecules/List.vue';
   import ListHeader from '@/components/ui/molecules/ListHeader.vue';
   import Card from '@/components/ui/atoms/Card.vue';
@@ -41,7 +41,8 @@
         'sortedListToken',
       ])
     },
-    mounted(){          
+    mounted(){ 
+      binanceStream();
       this.getTokenList();   
     }, 
     methods:{
@@ -52,14 +53,11 @@
       },
       async getTokenList(){
         this.loading = true;
-        const listTokenId = ['ethereum','bitcoin','cardano','matic-network','binancecoin','pancakeswap-token','solana'];    
+        const listTokenId = ['ethereum','bitcoin']    
         const listToken = await getListInfoToken(listTokenId);
         listToken.forEach(token => {
           this.$store.commit('addToken', token);
         });
-        const streamCryptoMarket = new StreamCryptoMarket();
-        const streamCryptoMarketObserver = new StreamCryptoMarketObserver(this.sortedListToken);
-        await streamCryptoMarket.addObserver(streamCryptoMarketObserver);
         this.loading = false;
       }, 
     }

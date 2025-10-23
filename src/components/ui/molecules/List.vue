@@ -2,7 +2,7 @@
   <div class="list-container">   
     <template v-if="loading">
       <ListItemSkeleton 
-        v-for="n in 7" 
+        v-for="n in 2" 
         :key="n"
       />
     </template>
