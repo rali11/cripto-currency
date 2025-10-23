@@ -27,9 +27,11 @@
 
 ## Overview
 
-![screenshit](https://i.ibb.co/VNzf11P/Screenshot-2023-02-20-at-19-49-30-cripto-currency.png)
+<img width="1125" height="536" alt="image" src="https://github.com/user-attachments/assets/becea173-158f-4f45-b91e-9ebae7dec98f" />
 
-![screenshot](https://i.ibb.co/RjkMcJm/Screenshot-2023-02-20-at-19-49-55-cripto-currency.png)
+<img width="600" height="497" alt="image" src="https://github.com/user-attachments/assets/59f0cf6e-0a9f-4661-ab3f-5f364af31fc5" />
+
+<img width="435" height="546" alt="image" src="https://github.com/user-attachments/assets/9b3da6b5-7418-42d8-8a0a-1cfd0e3474b0" />
 
 ### Built With
 
